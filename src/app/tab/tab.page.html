@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <!--      <ion-back-button text="" />-->
+    </ion-buttons>
+    <ion-title>{{ title() }}</ion-title>
+    <ion-buttons slot="end">
+      <!--      <ion-button size="small">-->
+      <!--        <ion-icon-->
+      <!--          slot="icon-only"-->
+      <!--          ios="logo-apple"-->
+      <!--          md="close-outline"-->
+      <!--        ></ion-icon>-->
+      <!--      </ion-button>-->
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div>Outlet: flow{{ outletIndex }}</div>
+
+  <br />
+
+  <ion-button color="warning" (click)="onNewFlow()">Open new flow</ion-button>
+</ion-content>

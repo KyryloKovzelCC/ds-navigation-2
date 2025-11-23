@@ -1,0 +1,52 @@
+<ion-tabs>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button
+      [routerLink]="getLink('home')"
+      routerDirection="root"
+      routerLinkActive
+      #rlaHome="routerLinkActive"
+      [attr.aria-selected]="rlaHome.isActive"
+      [routerLinkActiveOptions]="{ exact: true }"
+      (click)="onClick(rlaHome)"
+    >
+      <ion-icon name="storefront"></ion-icon>
+      Home
+    </ion-tab-button>
+    <ion-tab-button
+      [routerLink]="getLink('watchlist')"
+      routerDirection="root"
+      routerLinkActive
+      #rlaWatch="routerLinkActive"
+      [attr.aria-selected]="rlaWatch.isActive"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <ion-icon name="alarm"></ion-icon>
+      Watchlist
+    </ion-tab-button>
+    <ion-tab-button
+      [routerLink]="getLink('portfolio')"
+      routerDirection="root"
+      routerLinkActive
+      #rlaPortfolio="routerLinkActive"
+      [attr.aria-selected]="rlaPortfolio.isActive"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <ion-icon name="bag"></ion-icon>
+      Portfolio
+    </ion-tab-button>
+    <ion-tab-button
+      [routerLink]="getLink('discover')"
+      routerDirection="root"
+      routerLinkActive
+      #rlaDiscover="routerLinkActive"
+      [attr.aria-selected]="rlaDiscover.isActive"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <ion-icon name="reader"></ion-icon>
+      Discover
+    </ion-tab-button>
+    <ion-tab-button>
+      <ion-icon name="grid"></ion-icon>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

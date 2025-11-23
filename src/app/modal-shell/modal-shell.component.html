@@ -1,0 +1,26 @@
+@if (ready()) {
+  <ion-modal
+    [isOpen]="isOpen()"
+    [backdropDismiss]="false"
+    [canDismiss]="true"
+    [presentingElement]="presentingEl()"
+    (didDismiss)="onDismiss()"
+    [initialBreakpoint]="0.95"
+    [breakpoints]="[0, 0.95]"
+    [expandToScroll]="false"
+    [handle]="true"
+    cssClass="flow-modal"
+  >
+    <ng-template>
+      <ion-router-outlet></ion-router-outlet>
+    </ng-template>
+  </ion-modal>
+}
+
+<!--<ion-header>-->
+<!--  <ion-toolbar> </ion-toolbar>-->
+<!--</ion-header>-->
+<!--<ion-content>-->
+<!--  <button (click)="onDismiss()">Close</button>-->
+<!--  <div>Outlet Index: {{ outletIndex() ?? "no" }}</div>-->
+<!--</ion-content>-->
