@@ -14,6 +14,7 @@ const tabsRoutes: Routes = [
         path: 'home',
         data: {
           title: 'Home',
+          tabIndex: 0,
         },
         loadComponent: () => import('./tab/tab.page').then((m) => m.TabPage),
       },
@@ -21,6 +22,7 @@ const tabsRoutes: Routes = [
         path: 'watchlist',
         data: {
           title: 'Watchlist',
+          tabIndex: 1,
         },
         loadComponent: () => import('./tab/tab.page').then((m) => m.TabPage),
       },
@@ -28,6 +30,7 @@ const tabsRoutes: Routes = [
         path: 'portfolio',
         data: {
           title: 'Portfolio',
+          tabIndex: 2,
         },
         loadComponent: () => import('./tab/tab.page').then((m) => m.TabPage),
       },
@@ -35,6 +38,7 @@ const tabsRoutes: Routes = [
         path: 'discover',
         data: {
           title: 'Discover',
+          tabIndex: 3,
         },
         loadComponent: () => import('./tab/tab.page').then((m) => m.TabPage),
       },

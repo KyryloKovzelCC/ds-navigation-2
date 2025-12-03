@@ -5,7 +5,7 @@ import {
   IonTabButton,
   IonTabs,
 } from '@ionic/angular/standalone';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NavigationService } from '../services/navigation.service';
 
 @Component({
@@ -19,26 +19,18 @@ export class TabsPage {
   private readonly router = inject(Router);
 
   protected getLink(seg: string) {
-    const tree = this.router.createUrlTree(
-      [
-        {
-          outlets: {
-            // primary: ['ai-search'],
-            [`flow${this.navigationService.outletIndex}`]: [
-              'trading',
-              'tabs',
-              seg,
-            ],
-          },
+    const tree = this.router.createUrlTree([
+      {
+        outlets: {
+          [`flow${this.navigationService.outletIndex}`]: [
+            'trading',
+            'tabs',
+            seg,
+          ],
         },
-      ],
-      // { relativeTo: this.router.routerState.root },
-    );
+      },
+    ]);
     console.log(tree);
     return tree;
-  }
-
-  onClick(arg: any): void {
-    console.log('on click', arg);
   }
 }

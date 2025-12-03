@@ -1,15 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
-import {
-  NavigationCancel,
-  NavigationCancellationCode,
-  NavigationError,
-  NavigationStart,
-  Router,
-  RouterOutlet,
-} from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NavigationService } from './services/navigation.service';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',

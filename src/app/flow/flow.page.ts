@@ -6,10 +6,8 @@ import {
   IonContent,
   IonButton,
   IonButtons,
-  IonIcon,
   IonBackButton,
 } from '@ionic/angular/standalone';
-import { ActivatedRoute, Router } from '@angular/router';
 import { NavigationService } from '../services/navigation.service';
 
 @Component({
@@ -21,7 +19,6 @@ import { NavigationService } from '../services/navigation.service';
     IonToolbar,
     IonButton,
     IonButtons,
-    IonIcon,
     IonTitle,
     IonContent,
     IonBackButton,
@@ -32,7 +29,7 @@ export class FlowPage {
 
   protected readonly title = input<string>('0');
 
-  public readonly outletIndex = this.navigationService.outletIndex;
+  protected readonly outletIndex = this.navigationService.outletIndex;
 
   protected onNext(): void {
     this.navigationService.navigateWithinOutlet([

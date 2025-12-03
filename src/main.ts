@@ -13,11 +13,15 @@ import {
 
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
+import { horizontalTransition } from './app/utils/animations';
 
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    provideIonicAngular(),
+    provideIonicAngular({
+      navAnimation: horizontalTransition,
+      mode: 'ios',
+    }),
     provideRouter(
       routes,
       withPreloading(PreloadAllModules),

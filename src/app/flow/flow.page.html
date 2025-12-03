@@ -4,20 +4,12 @@
       <ion-back-button text="" />
     </ion-buttons>
     <ion-title>Page {{ title() }}</ion-title>
-    <ion-buttons slot="end">
-      <!--      <ion-button size="small">-->
-      <!--        <ion-icon-->
-      <!--          slot="icon-only"-->
-      <!--          ios="logo-apple"-->
-      <!--          md="close-outline"-->
-      <!--        ></ion-icon>-->
-      <!--      </ion-button>-->
-    </ion-buttons>
+    <ion-buttons slot="end"> </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div>Outlet: flow{{ outletIndex }}, Page: {{ title() }}</div>
+  <div>Outlet: flow{{ outletIndex }}</div>
   <br />
 
   @if (+title() < 4) {

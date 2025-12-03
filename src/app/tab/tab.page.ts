@@ -6,35 +6,29 @@ import {
   IonContent,
   IonButton,
   IonButtons,
-  IonIcon,
-  IonBackButton,
 } from '@ionic/angular/standalone';
-import { ActivatedRoute, Router } from '@angular/router';
 import { NavigationService } from '../services/navigation.service';
 
 @Component({
   selector: 'app-tab',
   templateUrl: 'tab.page.html',
   styleUrls: ['tab.page.scss'],
-  imports: [
-    IonHeader,
-    IonToolbar,
-    IonButton,
-    IonButtons,
-    IonIcon,
-    IonTitle,
-    IonContent,
-    IonBackButton,
-  ],
+  imports: [IonHeader, IonToolbar, IonButton, IonButtons, IonTitle, IonContent],
+  host: { '[attr.data-tab-index]': 'tabIndex()' },
 })
 export class TabPage {
   private readonly navigationService = inject(NavigationService);
 
+  protected readonly tabIndex = input<number>();
   protected readonly title = input<string>();
 
   public readonly outletIndex = this.navigationService.outletIndex;
 
   protected onNewFlow(): void {
     this.navigationService.navigateWithinNewOutlet(['0']);
+  }
+
+  constructor() {
+    console.log({ tabIndex: this.tabIndex() });
   }
 }

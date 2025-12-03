@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { InjectionToken } from '@angular/core';
 
 export const FLOW_OUTLET_INDEX = new InjectionToken<number>(
