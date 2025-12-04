@@ -5,11 +5,11 @@
     [backdropDismiss]="false"
     [canDismiss]="true"
     (willDismiss)="onWillDismiss()"
-    (didDismiss)="onDismiss()"
-    [initialBreakpoint]="0.95"
-    [breakpoints]="[0, 0.95]"
+    (didDismiss)="onDidDismiss()"
+    [initialBreakpoint]="initialBreakPoint"
+    [breakpoints]="[0, initialBreakPoint]"
     [expandToScroll]="false"
-    [handle]="outletIndex === activeOutletIndex()"
+    [handle]="false"
     cssClass="flow-modal"
   >
     <ng-template>

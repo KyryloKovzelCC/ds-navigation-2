@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  computed,
   effect,
   ElementRef,
   inject,
@@ -30,6 +29,12 @@ export class ModalShellComponent implements AfterViewInit {
 
   protected readonly outletIndex = this.navigationService.outletIndex;
 
+  protected readonly initialBreakPoint =
+    this.navigationService.outletIndex === 0 ? 0.95 : 0.98;
+
+  protected readonly animationShift =
+    this.navigationService.outletIndex === 0 ? -25 : -10;
+
   protected readonly activeOutletIndex = this.outletService.activeOutletIndex;
   private prevActiveOutletIndex = this.activeOutletIndex();
 
@@ -38,9 +43,7 @@ export class ModalShellComponent implements AfterViewInit {
 
   private readonly modal = viewChild('modal', { read: ElementRef });
 
-  protected presentingEl?: HTMLElement;
-
-  private sheetAnimation?: Animation;
+  private sheetAnimationToBack?: Animation;
 
   constructor() {
     this.outletService.activeOutletIndex.set(this.outletIndex);
@@ -48,13 +51,16 @@ export class ModalShellComponent implements AfterViewInit {
     effect(() => {
       const activeOutletIndex = this.activeOutletIndex();
 
-      if (activeOutletIndex === this.outletIndex + 1) {
-        this.sheetAnimation?.direction('normal').play();
+      if (
+        activeOutletIndex === this.outletIndex + 1 &&
+        this.prevActiveOutletIndex === this.outletIndex
+      ) {
+        this.sheetAnimationToBack?.direction('normal').play();
       } else if (
         activeOutletIndex === this.outletIndex &&
         this.prevActiveOutletIndex !== activeOutletIndex
       ) {
-        this.sheetAnimation?.direction('reverse').play();
+        this.sheetAnimationToBack?.direction('reverse').play();
       }
 
       this.prevActiveOutletIndex = activeOutletIndex;
@@ -70,19 +76,19 @@ export class ModalShellComponent implements AfterViewInit {
     const modal = this.modal();
     if (!modal) return;
 
-    this.sheetAnimation = this.animationController
+    this.sheetAnimationToBack = this.animationController
       .create()
       .addElement(modal.nativeElement)
-      .duration(300)
+      .duration(400)
       .easing('ease-in-out')
       .fromTo(
         'transform',
-        'scale(1) translateY(0)',
-        'scale(0.96) translateY(-25px)',
+        'translateY(0) scale(1)',
+        `translateY(${this.animationShift}px) scale(0.8)`,
       )
       .fill('both');
 
-    // PresentingEl approach is buggy
+    // presentingEl approach is buggy
     // if (this.outletIndex === 0) {
     //   this.presentingEl = undefined;
     // } else {
@@ -100,17 +106,15 @@ export class ModalShellComponent implements AfterViewInit {
   }
 
   public onWillDismiss(): void {
-    // It still fires when the modal disappears already which causes the delay before the animation
+    // It still fires when the modal disappears already, which causes the delay before the animation
     console.log('onWillDismiss');
 
     this.outletService.activeOutletIndex.set(
       this.outletIndex > 0 ? this.outletIndex - 1 : undefined,
     );
   }
-
-  protected async onDismiss(): Promise<boolean> {
+  public async onDidDismiss(): Promise<boolean> {
     this.isOpen.set(false);
-
     return this.navigationService.dismissOutlet();
   }
 }

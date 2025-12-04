@@ -26,17 +26,20 @@ import { Router } from '@angular/router';
     IonButtons,
     IonButton,
   ],
+  host: { '[class.is-blurred]': 'activeOutletIndex() > 0' },
 })
 export class AiSearchPage {
   private readonly router = inject(Router);
   private readonly outletService = inject(OutletService);
 
+  protected readonly activeOutletIndex = this.outletService.activeOutletIndex;
+
   protected readonly showCloseButton = computed(() => {
-    return this.outletService.activeOutletIndex() === undefined;
+    return this.activeOutletIndex() === undefined;
   });
 
   protected onClose(): void {
-    this.outletService.activeOutletIndex.set(0);
+    this.activeOutletIndex.set(0);
     this.router.navigate([
       {
         outlets: {

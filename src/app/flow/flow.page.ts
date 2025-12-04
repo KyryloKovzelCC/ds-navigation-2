@@ -7,8 +7,10 @@ import {
   IonButton,
   IonButtons,
   IonBackButton,
+  IonIcon,
 } from '@ionic/angular/standalone';
 import { NavigationService } from '../services/navigation.service';
+import { OutletService } from '../services/outlet.service';
 
 @Component({
   selector: 'app-home',
@@ -22,9 +24,11 @@ import { NavigationService } from '../services/navigation.service';
     IonTitle,
     IonContent,
     IonBackButton,
+    IonIcon,
   ],
 })
 export class FlowPage {
+  private readonly outletService = inject(OutletService);
   private readonly navigationService = inject(NavigationService);
 
   protected readonly title = input<string>('0');
@@ -39,5 +43,13 @@ export class FlowPage {
 
   protected onNewFlow(): void {
     this.navigationService.navigateWithinNewOutlet(['0']);
+  }
+
+  public async dismissOutlet(): Promise<boolean> {
+    this.outletService.activeOutletIndex.set(
+      this.outletIndex > 0 ? this.outletIndex - 1 : undefined,
+    );
+
+    return this.navigationService.dismissOutlet();
   }
 }
