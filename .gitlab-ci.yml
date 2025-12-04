@@ -1,0 +1,17 @@
+image: node:20
+
+cache:
+  paths:
+    - node_modules/
+
+pages:
+  stage: deploy
+  script:
+    - npm ci
+    - npm run build          # this should run "ionic build"
+    - mv www public          # Ionic build output → GitLab Pages "public" dir
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
