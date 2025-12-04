@@ -21,9 +21,7 @@ export const horizontalTransition = (
     direction = enteringIndex > leavingIndex ? 'forward' : 'back';
   }
 
-  const root = createAnimation()
-    .duration(300)
-    .easing('cubic-bezier(0.36,0.66,0.04,1)');
+  const root = createAnimation().duration(400).easing('ease-in-out');
 
   // new page
   const enter = createAnimation()
