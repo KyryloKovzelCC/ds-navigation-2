@@ -9,7 +9,7 @@ import { Router, RouterModule } from '@angular/router';
 import { NavigationService } from '../services/navigation.service';
 
 @Component({
-  selector: 'app-ai-search',
+  selector: 'app-tabs-page',
   templateUrl: 'tabs.page.html',
   styleUrls: ['tabs.page.scss'],
   imports: [IonTabBar, IonIcon, IonTabButton, IonTabs, RouterModule],
@@ -19,7 +19,7 @@ export class TabsPage {
   private readonly router = inject(Router);
 
   protected getLink(seg: string) {
-    const tree = this.router.createUrlTree([
+    return this.router.createUrlTree([
       {
         outlets: {
           [`flow${this.navigationService.outletIndex}`]: [
@@ -30,7 +30,5 @@ export class TabsPage {
         },
       },
     ]);
-    console.log(tree);
-    return tree;
   }
 }

@@ -1,14 +1,14 @@
-<ion-header [translucent]="true">
-  <!--  @if (false) {-->
+<ion-header>
   <ion-toolbar>
     <ion-title> Blank </ion-title>
     <ion-buttons slot="end">
+      @if (showCloseButton()) {
       <ion-button (click)="onClose()">
         <ion-icon name="close"></ion-icon>
       </ion-button>
+      }
     </ion-buttons>
   </ion-toolbar>
-  <!--  }-->
   <ion-toolbar>
     <ion-title> Search or ask anything </ion-title>
   </ion-toolbar>

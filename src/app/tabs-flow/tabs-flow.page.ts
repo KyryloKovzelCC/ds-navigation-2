@@ -3,7 +3,7 @@ import { IonRouterOutlet } from '@ionic/angular/standalone';
 import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-ai-search',
+  selector: 'app-tabs-flow',
   templateUrl: 'tabs-flow.page.html',
   styleUrls: ['tabs-flow.page.scss'],
   imports: [RouterModule, IonRouterOutlet],

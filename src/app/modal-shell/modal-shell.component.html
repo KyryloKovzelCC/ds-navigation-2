@@ -1,14 +1,15 @@
 @if (ready()) {
   <ion-modal
+    #modal
     [isOpen]="isOpen()"
     [backdropDismiss]="false"
     [canDismiss]="true"
-    [presentingElement]="presentingEl()"
+    (willDismiss)="onWillDismiss()"
     (didDismiss)="onDismiss()"
     [initialBreakpoint]="0.95"
     [breakpoints]="[0, 0.95]"
     [expandToScroll]="false"
-    [handle]="true"
+    [handle]="outletIndex === activeOutletIndex()"
     cssClass="flow-modal"
   >
     <ng-template>

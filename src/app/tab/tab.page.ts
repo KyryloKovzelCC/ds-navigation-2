@@ -27,8 +27,4 @@ export class TabPage {
   protected onNewFlow(): void {
     this.navigationService.navigateWithinNewOutlet(['0']);
   }
-
-  constructor() {
-    console.log({ tabIndex: this.tabIndex() });
-  }
 }

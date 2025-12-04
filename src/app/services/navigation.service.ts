@@ -25,10 +25,12 @@ export class NavigationService {
   public navigateWithinNewOutlet(segments: string[]): Promise<any> {
     if (this.outletIndex > 2) return Promise.resolve();
 
-    console.log('Opening new outlet', this.outletIndex + 1);
+    const newOutletIndex = this.outletIndex + 1;
+
+    console.log('Opening new outlet', newOutletIndex);
 
     const route = [
-      { outlets: { [`flow${this.outletIndex + 1}`]: ['flow', ...segments] } },
+      { outlets: { [`flow${newOutletIndex}`]: ['flow', ...segments] } },
     ];
     return this.router.navigate(route);
   }
