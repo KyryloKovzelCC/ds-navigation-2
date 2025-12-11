@@ -4,8 +4,6 @@ export const horizontalTransition = (
   baseEl: HTMLElement,
   opts?: any,
 ): Animation => {
-  console.log('run');
-
   const enteringEl = opts.enteringEl as HTMLElement;
   const leavingEl = opts.leavingEl as HTMLElement | undefined;
   let direction = opts.direction === 'back' ? 'back' : 'forward';

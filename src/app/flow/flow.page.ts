@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import {
   IonHeader,
   IonToolbar,
@@ -6,11 +6,12 @@ import {
   IonContent,
   IonButton,
   IonButtons,
-  IonBackButton,
   IonIcon,
+  IonRouterLink,
 } from '@ionic/angular/standalone';
 import { NavigationService } from '../services/navigation.service';
 import { OutletService } from '../services/outlet.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -23,8 +24,9 @@ import { OutletService } from '../services/outlet.service';
     IonButtons,
     IonTitle,
     IonContent,
-    IonBackButton,
     IonIcon,
+    RouterModule,
+    IonRouterLink,
   ],
 })
 export class FlowPage {
@@ -32,17 +34,27 @@ export class FlowPage {
   private readonly navigationService = inject(NavigationService);
 
   protected readonly title = input<string>('0');
+  protected readonly backPathSegments = input<string[] | undefined>();
+
+  protected readonly backUrlTree = computed(() => {
+    const backPathSegments = this.backPathSegments();
+
+    if (!backPathSegments?.length) return undefined;
+
+    return this.navigationService.getBackUrlTree(backPathSegments);
+  });
 
   protected readonly outletIndex = this.navigationService.outletIndex;
 
   protected onNext(): void {
-    this.navigationService.navigateWithinOutlet([
+    this.navigationService.navigateForward([
+      'flow',
       (+this.title() + 1).toString(),
     ]);
   }
 
   protected onNewFlow(): void {
-    this.navigationService.navigateWithinNewOutlet(['0']);
+    this.navigationService.navigateWithinNewOutlet(['flow', '0']);
   }
 
   public async dismissOutlet(): Promise<boolean> {

@@ -68,6 +68,7 @@ const flowRoutes: Routes = [
         path: '1',
         data: {
           title: '1',
+          backPathSegments: ['flow', '0'],
         },
         loadComponent: () => import('./flow/flow.page').then((m) => m.FlowPage),
       },
@@ -75,6 +76,7 @@ const flowRoutes: Routes = [
         path: '2',
         data: {
           title: '2',
+          backPathSegments: ['flow', '1'],
         },
         loadComponent: () => import('./flow/flow.page').then((m) => m.FlowPage),
       },
@@ -82,6 +84,7 @@ const flowRoutes: Routes = [
         path: '3',
         data: {
           title: '3',
+          backPathSegments: ['flow', '2'],
         },
         loadComponent: () => import('./flow/flow.page').then((m) => m.FlowPage),
       },
@@ -89,6 +92,7 @@ const flowRoutes: Routes = [
         path: '4',
         data: {
           title: '4',
+          backPathSegments: ['flow', '3'],
         },
         loadComponent: () => import('./flow/flow.page').then((m) => m.FlowPage),
       },

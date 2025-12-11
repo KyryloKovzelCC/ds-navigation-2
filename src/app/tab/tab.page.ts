@@ -25,6 +25,6 @@ export class TabPage {
   public readonly outletIndex = this.navigationService.outletIndex;
 
   protected onNewFlow(): void {
-    this.navigationService.navigateWithinNewOutlet(['0']);
+    this.navigationService.navigateWithinNewOutlet(['flow', '0']);
   }
 }

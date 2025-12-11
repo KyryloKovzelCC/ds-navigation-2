@@ -1,11 +1,19 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button text="" />
+      @if (backUrlTree()) {
+      <ion-button
+        fill="clear"
+        [routerLink]="backUrlTree()"
+        routerDirection="back"
+      >
+        <ion-icon slot="icon-only" name="chevron-back"></ion-icon>
+      </ion-button>
+      }
     </ion-buttons>
     <ion-title>Page {{ title() }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="dismissOutlet()">
+      <ion-button fill="clear" (click)="dismissOutlet()">
         <ion-icon name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
