@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, OnDestroy } from '@angular/core';
 import { Router, UrlTree } from '@angular/router';
 import { InjectionToken } from '@angular/core';
 import { NavController } from '@ionic/angular/standalone';
@@ -8,37 +8,30 @@ export const FLOW_OUTLET_INDEX = new InjectionToken<number>(
 );
 
 @Injectable()
-export class NavigationService {
+export class NavigationService implements OnDestroy {
   private readonly router = inject(Router);
   private readonly navController = inject(NavController);
   public readonly outletIndex: number = inject(FLOW_OUTLET_INDEX);
   private readonly outletIndexes = [0, 1, 2, 3];
 
   constructor() {
-    console.log('Created outlet index', this.outletIndex);
+    console.log('Created NavigationService, outlet index:', this.outletIndex);
   }
 
-  public getBackUrlTree(segments: string[]): UrlTree {
-    return this.router.createUrlTree([
-      {
-        outlets: {
-          [`flow${this.outletIndex}`]: [...segments],
-          ...this.dismissHigherOutlets(),
-        },
-      },
-    ]);
+  public ngOnDestroy(): void {
+    console.log('Destroyed NavigationService, outlet index:', this.outletIndex);
+  }
+
+  public navigateBack(segments?: string[]): Promise<any> {
+    if (!segments?.length) return Promise.resolve();
+
+    const route = this.buildCommands(segments);
+    return this.navController.navigateBack(route);
   }
 
   public navigateForward(segments: string[]): Promise<any> {
-    const route = [
-      {
-        outlets: {
-          [`flow${this.outletIndex}`]: [...segments],
-          ...this.dismissHigherOutlets(),
-        },
-      },
-    ];
-    return this.router.navigate(route);
+    const route = this.buildCommands(segments);
+    return this.navController.navigateForward(route);
   }
 
   public navigateWithinNewOutlet(segments: string[]): Promise<any> {
@@ -48,7 +41,8 @@ export class NavigationService {
 
     console.log('Opening new outlet', newOutletIndex);
 
-    const route = [{ outlets: { [`flow${newOutletIndex}`]: [...segments] } }];
+    const route = this.buildCommands(segments, newOutletIndex);
+    console.log('Navigating to', route);
     return this.router.navigate(route);
   }
 
@@ -59,14 +53,28 @@ export class NavigationService {
       { outlets: { [`flow${this.outletIndex}`]: null } },
     ]);
 
-    console.log(tree);
-
     return this.router.navigateByUrl(tree);
   }
 
-  private dismissHigherOutlets(): Record<string, string | null> {
+  private buildCommands(
+    segments: string[],
+    outletIndex = this.outletIndex,
+  ): any[] {
+    return [
+      {
+        outlets: {
+          [`flow${outletIndex}`]: [...segments],
+          ...this.dismissHigherOutlets(outletIndex),
+        },
+      },
+    ];
+  }
+
+  private dismissHigherOutlets(
+    outletIndex = this.outletIndex,
+  ): Record<string, string | null> {
     return this.outletIndexes
-      .filter((i) => i > this.outletIndex)
+      .filter((i) => i > outletIndex)
       .reduce((acc, i) => ({ ...acc, [`flow${i}`]: null }), {});
   }
 }

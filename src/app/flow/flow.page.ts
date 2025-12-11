@@ -7,11 +7,9 @@ import {
   IonButton,
   IonButtons,
   IonIcon,
-  IonRouterLink,
 } from '@ionic/angular/standalone';
 import { NavigationService } from '../services/navigation.service';
 import { OutletService } from '../services/outlet.service';
-import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -25,8 +23,6 @@ import { RouterModule } from '@angular/router';
     IonTitle,
     IonContent,
     IonIcon,
-    RouterModule,
-    IonRouterLink,
   ],
 })
 export class FlowPage {
@@ -36,15 +32,11 @@ export class FlowPage {
   protected readonly title = input<string>('0');
   protected readonly backPathSegments = input<string[] | undefined>();
 
-  protected readonly backUrlTree = computed(() => {
-    const backPathSegments = this.backPathSegments();
-
-    if (!backPathSegments?.length) return undefined;
-
-    return this.navigationService.getBackUrlTree(backPathSegments);
-  });
-
   protected readonly outletIndex = this.navigationService.outletIndex;
+
+  protected onBack(): void {
+    this.navigationService.navigateBack(this.backPathSegments());
+  }
 
   protected onNext(): void {
     this.navigationService.navigateForward([
