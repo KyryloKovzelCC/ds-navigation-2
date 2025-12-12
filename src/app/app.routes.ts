@@ -1,5 +1,4 @@
-import { Route, Routes } from '@angular/router';
-import { ModalShellComponent } from './modal-shell/modal-shell.component';
+import { Routes } from '@angular/router';
 import {
   FLOW_OUTLET_INDEX,
   NavigationService,
@@ -119,6 +118,13 @@ const flowChildren: Routes = [
 export const routes: Routes = [
   {
     path: '',
+    providers: [
+      NavigationService,
+      {
+        provide: FLOW_OUTLET_INDEX,
+        useValue: -1,
+      },
+    ],
     children: [
       {
         path: 'ai-search',

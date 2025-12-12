@@ -6,18 +6,7 @@ export const horizontalTransition = (
 ): Animation => {
   const enteringEl = opts.enteringEl as HTMLElement;
   const leavingEl = opts.leavingEl as HTMLElement | undefined;
-  let direction = opts.direction === 'back' ? 'back' : 'forward';
-
-  const inTabs = !!enteringEl.closest('ion-tabs');
-
-  if (inTabs && leavingEl) {
-    const enteringIndex = Number(
-      enteringEl.getAttribute('data-tab-index') ?? 0,
-    );
-    const leavingIndex = Number(leavingEl.getAttribute('data-tab-index') ?? 0);
-
-    direction = enteringIndex > leavingIndex ? 'forward' : 'back';
-  }
+  const direction = opts.direction === 'back' ? 'back' : 'forward';
 
   const root = createAnimation().duration(400).easing('ease-in-out');
 

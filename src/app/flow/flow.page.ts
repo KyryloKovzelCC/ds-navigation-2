@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import {
   IonHeader,
   IonToolbar,
@@ -9,7 +9,6 @@ import {
   IonIcon,
 } from '@ionic/angular/standalone';
 import { NavigationService } from '../services/navigation.service';
-import { OutletService } from '../services/outlet.service';
 
 @Component({
   selector: 'app-home',
@@ -26,7 +25,6 @@ import { OutletService } from '../services/outlet.service';
   ],
 })
 export class FlowPage {
-  private readonly outletService = inject(OutletService);
   private readonly navigationService = inject(NavigationService);
 
   protected readonly title = input<string>('0');
@@ -50,10 +48,6 @@ export class FlowPage {
   }
 
   public async dismissOutlet(): Promise<boolean> {
-    this.outletService.activeOutletIndex.set(
-      this.outletIndex > 0 ? this.outletIndex - 1 : undefined,
-    );
-
     return this.navigationService.dismissOutlet();
   }
 }

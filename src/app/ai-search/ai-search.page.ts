@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { AfterViewInit, Component, computed, inject } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   IonHeader,
@@ -11,7 +11,6 @@ import {
 } from '@ionic/angular/standalone';
 import { NavigationService } from '../services/navigation.service';
 import { OutletService } from '../services/outlet.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-ai-search',
@@ -28,8 +27,8 @@ import { Router } from '@angular/router';
   ],
   host: { '[class.is-blurred]': 'activeOutletIndex() > 0' },
 })
-export class AiSearchPage {
-  private readonly router = inject(Router);
+export class AiSearchPage implements AfterViewInit {
+  private readonly navigationService = inject(NavigationService);
   private readonly outletService = inject(OutletService);
 
   protected readonly activeOutletIndex = this.outletService.activeOutletIndex;
@@ -38,14 +37,23 @@ export class AiSearchPage {
     return this.activeOutletIndex() === undefined;
   });
 
+  constructor() {
+    this.outletService.activeOutletIndex.set(
+      this.navigationService.outletIndex,
+    );
+  }
+
+  public ngAfterViewInit(): void {
+    if (this.activeOutletIndex() === -1) {
+      this.navigationService.navigateWithinNewOutlet([
+        'trading',
+        'tabs',
+        'home',
+      ]);
+    }
+  }
+
   protected onClose(): void {
-    this.activeOutletIndex.set(0);
-    this.router.navigate([
-      {
-        outlets: {
-          [`flow0`]: ['trading', 'tabs'],
-        },
-      },
-    ]);
+    this.navigationService.navigateWithinNewOutlet(['trading', 'tabs', 'home']);
   }
 }

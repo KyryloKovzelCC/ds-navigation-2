@@ -1,36 +1,36 @@
 import { inject, Injectable, OnDestroy } from '@angular/core';
-import { Router, UrlTree } from '@angular/router';
+import { Router } from '@angular/router';
 import { InjectionToken } from '@angular/core';
 import { NavController } from '@ionic/angular/standalone';
+import { OutletService } from './outlet.service';
 
 export const FLOW_OUTLET_INDEX = new InjectionToken<number>(
   'FLOW_OUTLET_INDEX',
 );
 
 @Injectable()
-export class NavigationService implements OnDestroy {
+export class NavigationService {
   private readonly router = inject(Router);
   private readonly navController = inject(NavController);
+  private readonly outletService = inject(OutletService);
   public readonly outletIndex: number = inject(FLOW_OUTLET_INDEX);
   private readonly outletIndexes = [0, 1, 2, 3];
-
-  constructor() {
-    console.log('Created NavigationService, outlet index:', this.outletIndex);
-  }
-
-  public ngOnDestroy(): void {
-    console.log('Destroyed NavigationService, outlet index:', this.outletIndex);
-  }
 
   public navigateBack(segments?: string[]): Promise<any> {
     if (!segments?.length) return Promise.resolve();
 
     const route = this.buildCommands(segments);
+
+    console.log('navigateBack', route);
+
     return this.navController.navigateBack(route);
   }
 
   public navigateForward(segments: string[]): Promise<any> {
     const route = this.buildCommands(segments);
+
+    console.log('navigateForward', route);
+
     return this.navController.navigateForward(route);
   }
 
@@ -38,20 +38,24 @@ export class NavigationService implements OnDestroy {
     if (this.outletIndex > 2) return Promise.resolve();
 
     const newOutletIndex = this.outletIndex + 1;
-
-    console.log('Opening new outlet', newOutletIndex);
-
     const route = this.buildCommands(segments, newOutletIndex);
-    console.log('Navigating to', route);
+
+    console.log('navigateWithinNewOutlet', route);
+
+    this.outletService.activeOutletIndex.set(newOutletIndex);
     return this.router.navigate(route);
   }
 
   public dismissOutlet(): Promise<any> {
-    console.log('Dismissing outlet', this.outletIndex);
+    this.outletService.activeOutletIndex.set(
+      this.outletIndex > 0 ? this.outletIndex - 1 : undefined,
+    );
 
     const tree = this.router.createUrlTree([
       { outlets: { [`flow${this.outletIndex}`]: null } },
     ]);
+
+    console.log('dismissOutlet', this.outletIndex);
 
     return this.router.navigateByUrl(tree);
   }

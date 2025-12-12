@@ -47,6 +47,7 @@ export class ModalShellComponent implements AfterViewInit {
 
   constructor() {
     this.outletService.activeOutletIndex.set(this.outletIndex);
+    console.log('Modalshell, outletIndex', this.outletIndex);
 
     effect(() => {
       const activeOutletIndex = this.activeOutletIndex();
@@ -105,14 +106,6 @@ export class ModalShellComponent implements AfterViewInit {
     // this.cdr.detectChanges();
   }
 
-  public onWillDismiss(): void {
-    // It still fires when the modal disappears already, which causes the delay before the animation
-    console.log('onWillDismiss');
-
-    this.outletService.activeOutletIndex.set(
-      this.outletIndex > 0 ? this.outletIndex - 1 : undefined,
-    );
-  }
   public async onDidDismiss(): Promise<boolean> {
     this.isOpen.set(false);
     return this.navigationService.dismissOutlet();
