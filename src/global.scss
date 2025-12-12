@@ -39,18 +39,22 @@
 
 .ion-page {
   --ion-toolbar-color: white;
-
-  background: black;
 }
 
 ion-header {
   &.header-md {
     box-shadow: none;
   }
+
+  background: black;
 }
 
 ion-toolbar {
   --background: transparent;
+
+  &::part(background) {
+    --border-width: 0;
+  }
 }
 
 ion-tab-bar {

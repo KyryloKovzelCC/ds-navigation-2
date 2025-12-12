@@ -1,18 +1,3 @@
-:host {
-  background-color: black;
-
-  &::before {
-    content: "";
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: top center / contain no-repeat url("/assets/img/BG_LD@2x.jpg");
-    width: 100%;
-    height: 100%;
-  }
-
-  &.is-blurred {
-    filter: blur(10px);
-  }
+ion-header {
+  background: transparent;
 }

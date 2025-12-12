@@ -1,5 +1,5 @@
-:host {
-  background-color: black;
+ion-header {
+  background: transparent;
 }
 
 .carousel-wrapper {
@@ -31,14 +31,16 @@
   max-width: 320px;
   height: 60%;
   max-height: 500px;
-  background: rgba(30, 30, 30);
+  background: rgb(30 30 30);
   border-radius: 20px;
   cursor: pointer;
-  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  transition:
+    transform 0.3s ease-out,
+    opacity 0.3s ease-out;
   backface-visibility: hidden;
   will-change: transform, opacity;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 40px rgb(0 0 0 / 50%);
+  border: 1px solid rgb(255 255 255 / 10%);
 
   &:active {
     transform: scale(0.98) !important;
@@ -61,4 +63,3 @@
     font-weight: 600;
   }
 }
-
