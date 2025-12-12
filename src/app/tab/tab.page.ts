@@ -27,4 +27,8 @@ export class TabPage {
   protected onNewFlow(): void {
     this.navigationService.navigateWithinNewOutlet(['flow', '0']);
   }
+
+  protected onSwitch(): void {
+    this.navigationService.dismissOutlet(['switch']);
+  }
 }

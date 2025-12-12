@@ -132,6 +132,11 @@ export const routes: Routes = [
           import('./ai-search/ai-search.page').then((m) => m.AiSearchPage),
       },
       {
+        path: 'switch',
+        loadComponent: () =>
+          import('./switch/switch.page').then((m) => m.SwitchPage),
+      },
+      {
         path: '',
         redirectTo: 'ai-search',
         pathMatch: 'full',

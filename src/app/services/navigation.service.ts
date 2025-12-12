@@ -46,18 +46,43 @@ export class NavigationService {
     return this.router.navigate(route);
   }
 
-  public dismissOutlet(): Promise<any> {
+  public dismissOutlet(primaryOutletSegmens?: string[]): Promise<any> {
     this.outletService.activeOutletIndex.set(
       this.outletIndex > 0 ? this.outletIndex - 1 : undefined,
     );
 
     const tree = this.router.createUrlTree([
-      { outlets: { [`flow${this.outletIndex}`]: null } },
+      { outlets: {
+        ...(primaryOutletSegmens && {primary: primaryOutletSegmens}),
+        [`flow${this.outletIndex}`]: null }
+      },
     ]);
 
     console.log('dismissOutlet', this.outletIndex);
 
     return this.router.navigateByUrl(tree);
+  }
+
+
+  public navigateToNewContext(segments: string[]): Promise<any> {
+    if (this.outletIndex > 2) return Promise.resolve();
+
+    const newOutletIndex = this.outletIndex + 1;
+    const route = [
+      {
+        path: '',
+        outlets: {
+          primary: ['ai-search'],
+          [`flow${newOutletIndex}`]: [...segments],
+          ...this.dismissHigherOutlets(newOutletIndex),
+        },
+      },
+    ];
+
+    console.log('navigateToNewContext', route);
+
+    this.outletService.activeOutletIndex.set(newOutletIndex);
+    return this.router.navigate(route);
   }
 
   private buildCommands(
