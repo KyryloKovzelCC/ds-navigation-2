@@ -41,6 +41,12 @@
   --ion-toolbar-color: white;
 }
 
+ion-modal {
+  .ion-page {
+    background: black;
+  }
+}
+
 ion-header {
   &.header-md {
     box-shadow: none;
