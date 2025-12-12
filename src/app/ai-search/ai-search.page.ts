@@ -44,13 +44,15 @@ export class AiSearchPage implements AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
-    if (this.activeOutletIndex() === -1) {
-      this.navigationService.navigateWithinNewOutlet([
-        'trading',
-        'tabs',
-        'home',
-      ]);
-    }
+    setTimeout(() => {
+      if (this.activeOutletIndex() === -1) {
+        this.navigationService.navigateWithinNewOutlet([
+          'trading',
+          'tabs',
+          'home',
+        ]);
+      }
+    });
   }
 
   protected onClose(): void {
