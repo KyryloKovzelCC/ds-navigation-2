@@ -52,17 +52,18 @@ export class NavigationService {
     );
 
     const tree = this.router.createUrlTree([
-      { outlets: {
-        ...(primaryOutletSegmens && {primary: primaryOutletSegmens}),
-        [`flow${this.outletIndex}`]: null }
+      {
+        outlets: {
+          ...(primaryOutletSegmens && { primary: primaryOutletSegmens }),
+          [`flow${this.outletIndex}`]: null,
+        },
       },
     ]);
 
     console.log('dismissOutlet', this.outletIndex);
 
-    return this.router.navigateByUrl(tree);
+    return this.navController.navigateRoot(tree);
   }
-
 
   public navigateToNewContext(segments: string[]): Promise<any> {
     if (this.outletIndex > 2) return Promise.resolve();
@@ -82,7 +83,7 @@ export class NavigationService {
     console.log('navigateToNewContext', route);
 
     this.outletService.activeOutletIndex.set(newOutletIndex);
-    return this.router.navigate(route);
+    return this.navController.navigateRoot(route);
   }
 
   private buildCommands(
