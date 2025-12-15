@@ -11,7 +11,7 @@
 
 <ion-content [fullscreen]="true">
   <div class="carousel-wrapper">
-    <div class="carousel-container">
+    <div class="carousel-container" [style]="getCarouselStyle()">
       @for (card of cards; track card.id; let i = $index) {
       <div
         class="card"

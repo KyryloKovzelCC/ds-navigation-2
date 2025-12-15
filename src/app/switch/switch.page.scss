@@ -8,8 +8,9 @@ ion-header {
   align-items: center;
   height: 100%;
   width: 100%;
-  perspective: 1000px;
+  perspective: 1200px;
   overflow: hidden;
+  position: relative;
 }
 
 .carousel-container {
@@ -18,32 +19,34 @@ ion-header {
   height: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   transform-style: preserve-3d;
   user-select: none;
-  touch-action: pan-y;
-  -webkit-overflow-scrolling: touch;
+  touch-action: none;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-top: 50vh;
 }
 
 .card {
   position: absolute;
   width: 85%;
   max-width: 320px;
-  height: 60%;
-  max-height: 500px;
+  height: 400px;
   background: rgb(30 30 30);
   border-radius: 20px;
   cursor: pointer;
-  transition:
-    transform 0.3s ease-out,
-    opacity 0.3s ease-out;
+  transform-style: preserve-3d;
   backface-visibility: hidden;
   will-change: transform, opacity;
-  box-shadow: 0 10px 40px rgb(0 0 0 / 50%);
+  box-shadow: 0 20px 60px rgb(0 0 0 / 60%);
   border: 1px solid rgb(255 255 255 / 10%);
+  transition: opacity 0.3s ease-out;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
 
   &:active {
-    transform: scale(0.98) !important;
+    filter: brightness(0.9);
   }
 }
 

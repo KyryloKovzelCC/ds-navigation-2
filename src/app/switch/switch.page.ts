@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, computed, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, computed, inject, OnDestroy, signal } from '@angular/core';
 import {
   IonHeader,
   IonToolbar,
@@ -30,7 +30,7 @@ interface Card {
     IonButton,
   ],
 })
-export class SwitchPage implements AfterViewInit {
+export class SwitchPage implements AfterViewInit, OnDestroy {
   private readonly navigationService = inject(NavigationService);
   private readonly outletService = inject(OutletService);
 
@@ -50,9 +50,15 @@ export class SwitchPage implements AfterViewInit {
   ];
 
   private isDragging = false;
-  private startX = 0;
-  private currentX = 0;
-  private carouselElement: HTMLElement | null = null;
+  private startY = 0;
+  private currentY = 0;
+  private carouselWrapper: HTMLElement | null = null;
+  private carouselContainer: HTMLElement | null = null;
+  private translateY = signal(0);
+  private velocity = 0;
+  private lastY = 0;
+  private lastTime = 0;
+  private animationFrameId: number | null = null;
 
   constructor() {
     this.outletService.activeOutletIndex.set(
@@ -61,107 +67,247 @@ export class SwitchPage implements AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
-    this.carouselElement = document.querySelector('.carousel-container');
-    if (this.carouselElement) {
+    this.carouselWrapper = document.querySelector('.carousel-wrapper');
+    this.carouselContainer = document.querySelector('.carousel-container');
+    if (this.carouselWrapper) {
       this.setupTouchHandlers();
     }
   }
 
   private setupTouchHandlers(): void {
-    if (!this.carouselElement) return;
+    if (!this.carouselWrapper || !this.carouselContainer) return;
 
-    this.carouselElement.addEventListener('touchstart', (e) => {
+    this.carouselWrapper.addEventListener('touchstart', (e) => {
       this.isDragging = true;
-      this.startX = e.touches[0].clientY; // Use clientY for vertical swiping
+      this.startY = e.touches[0].clientY;
+      this.lastY = e.touches[0].clientY;
+      this.lastTime = Date.now();
+      this.velocity = 0;
+      if (this.carouselContainer) {
+        this.carouselContainer.style.transition = 'none';
+      }
+      this.stopMomentum();
     }, { passive: false });
 
-    this.carouselElement.addEventListener('touchmove', (e) => {
+    this.carouselWrapper.addEventListener('touchmove', (e) => {
       if (!this.isDragging) return;
       e.preventDefault();
-      this.currentX = e.touches[0].clientY;
-      this.updateCarouselPosition();
+      const currentTime = Date.now();
+      const deltaTime = currentTime - this.lastTime;
+      const deltaY = e.touches[0].clientY - this.lastY;
+      
+      if (deltaTime > 0) {
+        this.velocity = deltaY / deltaTime;
+      }
+      
+      this.currentY = e.touches[0].clientY;
+      this.lastY = e.touches[0].clientY;
+      this.lastTime = currentTime;
+      this.updatePosition();
     }, { passive: false });
 
-    this.carouselElement.addEventListener('touchend', () => {
+    this.carouselWrapper.addEventListener('touchend', () => {
       if (!this.isDragging) return;
       this.isDragging = false;
-      this.snapToCard();
+      this.startMomentum();
     }, { passive: false });
 
-    // Mouse events for desktop (wheel for vertical scrolling)
-    this.carouselElement.addEventListener('wheel', (e) => {
+    // Mouse events for desktop
+    this.carouselWrapper.addEventListener('mousedown', (e) => {
+      this.isDragging = true;
+      this.startY = e.clientY;
+      this.lastY = e.clientY;
+      this.lastTime = Date.now();
+      this.velocity = 0;
+      if (this.carouselContainer) {
+        this.carouselContainer.style.transition = 'none';
+      }
+      this.stopMomentum();
+    }, { passive: false });
+
+    this.carouselWrapper.addEventListener('mousemove', (e) => {
+      if (!this.isDragging) return;
+      e.preventDefault();
+      const currentTime = Date.now();
+      const deltaTime = currentTime - this.lastTime;
+      const deltaY = e.clientY - this.lastY;
+      
+      if (deltaTime > 0) {
+        this.velocity = deltaY / deltaTime;
+      }
+      
+      this.currentY = e.clientY;
+      this.lastY = e.clientY;
+      this.lastTime = currentTime;
+      this.updatePosition();
+    }, { passive: false });
+
+    this.carouselWrapper.addEventListener('mouseup', () => {
+      if (!this.isDragging) return;
+      this.isDragging = false;
+      this.startMomentum();
+    }, { passive: false });
+
+    this.carouselWrapper.addEventListener('mouseleave', () => {
+      if (this.isDragging) {
+        this.isDragging = false;
+        this.startMomentum();
+      }
+    }, { passive: false });
+
+    // Wheel events for desktop
+    this.carouselWrapper.addEventListener('wheel', (e) => {
       e.preventDefault();
       const threshold = 30;
       const delta = e.deltaY;
 
       if (Math.abs(delta) > threshold) {
-        if (delta > 0 && this.currentIndex() > 0) {
-          // Scroll down - go to previous card
-          this.currentIndex.set(this.currentIndex() - 1);
-        } else if (delta < 0 && this.currentIndex() < this.cards.length - 1) {
-          // Scroll up - go to next card
-          this.currentIndex.set(this.currentIndex() + 1);
-        }
+        const cardHeight = 450; // Card height + gap
+        const newTranslateY = this.translateY() - delta * 0.5;
+        this.translateY.set(newTranslateY);
+        this.snapToCard();
       }
     }, { passive: false });
   }
 
-  private updateCarouselPosition(): void {
-    if (!this.carouselElement) return;
-    const deltaY = this.currentX - this.startX;
-    const threshold = 50; // Minimum swipe distance
-
-    // Calculate potential new index
-    let newIndex = this.currentIndex();
-    if (Math.abs(deltaY) > threshold) {
-      if (deltaY > 0 && this.currentIndex() > 0) {
-        // Swipe down - go to previous card
-        newIndex = this.currentIndex() - 1;
-      } else if (deltaY < 0 && this.currentIndex() < this.cards.length - 1) {
-        // Swipe up - go to next card
-        newIndex = this.currentIndex() + 1;
-      }
+  private updatePosition(): void {
+    if (!this.carouselWrapper) return;
+    const deltaY = this.currentY - this.startY;
+    const cardHeight = 450; // Card height + gap
+    let newTranslateY = this.translateY() + deltaY;
+    
+    // Calculate boundaries
+    const minTranslateY = 0;
+    const maxTranslateY = (this.cards.length - 1) * cardHeight;
+    
+    // Clamp to boundaries with resistance
+    if (newTranslateY < minTranslateY) {
+      newTranslateY = minTranslateY + (newTranslateY - minTranslateY) * 0.3;
+    } else if (newTranslateY > maxTranslateY) {
+      newTranslateY = maxTranslateY + (newTranslateY - maxTranslateY) * 0.3;
     }
-
-    // Only update if we're at boundaries or have enough movement
-    if (newIndex !== this.currentIndex()) {
-      this.currentIndex.set(newIndex);
-      this.startX = this.currentX;
+    
+    this.translateY.set(newTranslateY);
+    this.startY = this.currentY;
+    
+    // Update current index based on position
+    const newIndex = Math.round(newTranslateY / cardHeight);
+    const clampedIndex = Math.max(0, Math.min(this.cards.length - 1, newIndex));
+    if (clampedIndex !== this.currentIndex()) {
+      this.currentIndex.set(clampedIndex);
     }
   }
 
-  private snapToCard(): void {
-    // Reset any temporary transform
-    if (this.carouselElement) {
-      this.carouselElement.style.transform = '';
+  private startMomentum(): void {
+    this.stopMomentum();
+    
+    const friction = 0.95;
+    const minVelocity = 0.1;
+    
+    const animate = () => {
+      if (Math.abs(this.velocity) < minVelocity) {
+        this.velocity = 0;
+        this.snapToCard();
+        return;
+      }
+      
+      const cardHeight = 450;
+      let newTranslateY = this.translateY() - this.velocity * 10;
+      
+      // Calculate boundaries
+      const minTranslateY = 0;
+      const maxTranslateY = (this.cards.length - 1) * cardHeight;
+      
+      // Apply boundaries with bounce
+      if (newTranslateY < minTranslateY) {
+        newTranslateY = minTranslateY;
+        this.velocity = 0;
+        this.snapToCard();
+        return;
+      } else if (newTranslateY > maxTranslateY) {
+        newTranslateY = maxTranslateY;
+        this.velocity = 0;
+        this.snapToCard();
+        return;
+      }
+      
+      this.translateY.set(newTranslateY);
+      this.velocity *= friction;
+      
+      // Update current index
+      const newIndex = Math.round(newTranslateY / cardHeight);
+      const clampedIndex = Math.max(0, Math.min(this.cards.length - 1, newIndex));
+      if (clampedIndex !== this.currentIndex()) {
+        this.currentIndex.set(clampedIndex);
+      }
+      
+      this.animationFrameId = requestAnimationFrame(animate);
+    };
+    
+    this.animationFrameId = requestAnimationFrame(animate);
+  }
+
+  private stopMomentum(): void {
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
     }
+    this.velocity = 0;
+  }
+
+  private snapToCard(): void {
+    this.stopMomentum();
+    
+    if (this.carouselContainer) {
+      this.carouselContainer.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+    }
+    
+    const cardHeight = 450;
+    const targetTranslateY = this.currentIndex() * cardHeight;
+    this.translateY.set(targetTranslateY);
   }
 
   protected onCardClick(card: Card): void {
     this.navigationService.navigateToNewContext(['trading', 'tabs', 'home']);
   }
 
-  protected getCardStyle(index: number): { [key: string]: string } {
-    const currentIdx = this.currentIndex();
-    const offset = index - currentIdx;
-    const absOffset = Math.abs(offset);
+  protected getCarouselStyle(): { [key: string]: string } {
+    return {
+      transform: `translateY(${-this.translateY()}px)`,
+    };
+  }
 
-    // Calculate scale and translate based on position
-    // Cards behind get smaller and move down
-    const scale = Math.max(0.65, 1 - absOffset * 0.12);
-    const translateY = offset * 50; // Vertical offset for stacking
-    const translateZ = -absOffset * 60; // Depth for 3D effect
-    const opacity = Math.max(0.4, 1 - absOffset * 0.25);
+  protected getCardStyle(index: number): { [key: string]: string } {
+    const cardHeight = 450; // Card height + gap
+    const baseY = index * cardHeight;
+    const currentY = this.translateY();
+    const offset = baseY - currentY;
+    const absOffset = Math.abs(offset);
+    
+    // Calculate scale and opacity based on distance from center
+    // Cards closer to center (offset = 0) are larger and more opaque
+    const maxDistance = cardHeight * 2;
+    const normalizedDistance = Math.min(absOffset / maxDistance, 1);
+    
+    const scale = Math.max(0.6, 1 - normalizedDistance * 0.4);
+    const opacity = Math.max(0.3, 1 - normalizedDistance * 0.7);
+    
+    // Calculate z-index - cards closer to center should be on top
+    const zIndex = this.cards.length - Math.round(normalizedDistance * this.cards.length);
 
     return {
-      transform: `translate3d(0, ${translateY}px, ${translateZ}px) scale(${scale})`,
+      transform: `translateX(-50%) translateY(${offset}px) scale(${scale})`,
       opacity: opacity.toString(),
-      zIndex: (this.cards.length - absOffset).toString(),
+      zIndex: zIndex.toString(),
     };
   }
 
   protected onClose(): void {
     this.navigationService.navigateToNewContext(['trading', 'tabs', 'home']);
+  }
+
+  public ngOnDestroy(): void {
+    this.stopMomentum();
   }
 }
 
