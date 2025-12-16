@@ -19,6 +19,7 @@ import {
 } from '@ionic/angular/standalone';
 import { NavigationService } from '../services/navigation.service';
 import { OutletService } from '../services/outlet.service';
+import { slideUpAndDownTransition } from '../utils/animations';
 
 interface Card {
   id: number;
@@ -168,22 +169,16 @@ export class SwitchPage implements AfterViewInit, OnDestroy {
     }
   }
 
-  protected onScroll(event: Event): void {
-    const target = event.target as HTMLElement;
-    if (target) {
-      this.scrollTop = target.scrollTop;
-      this.updateLayout();
-    }
-  }
-
   protected onCardClick(card: Card): void {
-    this.navigationService.navigateToNewContext(['trading', 'tabs', 'home']);
+    this.navigationService.navigateToNewContext(['trading', 'tabs', 'home'], {
+      animation: slideUpAndDownTransition,
+    });
   }
 
   protected onClose(): void {
     // Implement whatever "close" should mean in your app
     this.navigationService.navigateBack(undefined, {
-      animation: undefined,
+      animation: slideUpAndDownTransition,
     });
   }
 

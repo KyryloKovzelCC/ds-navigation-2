@@ -8,6 +8,7 @@ import {
   IonButtons,
 } from '@ionic/angular/standalone';
 import { NavigationService } from '../services/navigation.service';
+import { slideUpAndDownTransition } from '../utils/animations';
 
 @Component({
   selector: 'app-tab',
@@ -29,6 +30,8 @@ export class TabPage {
   }
 
   protected onSwitch(): void {
-    this.navigationService.dismissOutlet(['switch']);
+    this.navigationService.dismissOutlet(['switch'], {
+      animation: slideUpAndDownTransition,
+    });
   }
 }

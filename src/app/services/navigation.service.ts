@@ -23,24 +23,31 @@ export class NavigationService {
     animationOptions?: AnimationOptions,
   ): Promise<any> {
     if (!segments) {
-      this.navController.back(animationOptions);
+      // back() may return void or Promise - handle both cases
+      const result = this.navController.back(animationOptions) as any;
+      return result && typeof result.then === 'function'
+        ? result
+        : Promise.resolve(result);
     }
 
-    if (!segments?.length) return Promise.resolve();
+    if (!segments.length) return Promise.resolve();
 
     const route = this.buildCommands(segments);
 
     console.log('navigateBack', route);
 
-    return this.navController.navigateBack(route);
+    return this.navController.navigateBack(route, animationOptions);
   }
 
-  public navigateForward(segments: string[]): Promise<any> {
+  public navigateForward(
+    segments: string[],
+    animationOptions?: AnimationOptions,
+  ): Promise<any> {
     const route = this.buildCommands(segments);
 
     console.log('navigateForward', route);
 
-    return this.navController.navigateForward(route);
+    return this.navController.navigateForward(route, animationOptions);
   }
 
   public navigateWithinNewOutlet(segments: string[]): Promise<any> {
@@ -55,7 +62,10 @@ export class NavigationService {
     return this.router.navigate(route);
   }
 
-  public dismissOutlet(primaryOutletSegmens?: string[]): Promise<any> {
+  public dismissOutlet(
+    primaryOutletSegmens?: string[],
+    animationOptions?: AnimationOptions,
+  ): Promise<any> {
     this.outletService.activeOutletIndex.set(
       this.outletIndex > 0 ? this.outletIndex - 1 : undefined,
     );
@@ -71,10 +81,13 @@ export class NavigationService {
 
     console.log('dismissOutlet', this.outletIndex);
 
-    return this.navController.navigateRoot(tree);
+    return this.navController.navigateRoot(tree, animationOptions);
   }
 
-  public navigateToNewContext(segments: string[]): Promise<any> {
+  public navigateToNewContext(
+    segments: string[],
+    animationOptions?: AnimationOptions,
+  ): Promise<any> {
     if (this.outletIndex > 2) return Promise.resolve();
 
     const newOutletIndex = this.outletIndex + 1;
@@ -92,7 +105,7 @@ export class NavigationService {
     console.log('navigateToNewContext', route);
 
     this.outletService.activeOutletIndex.set(newOutletIndex);
-    return this.navController.navigateRoot(route);
+    return this.navController.navigateRoot(route, animationOptions);
   }
 
   private buildCommands(

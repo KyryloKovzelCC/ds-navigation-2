@@ -13,7 +13,7 @@
 </ion-header>
 
 <ion-content [scrollY]="false">
-  <div class="scrollable-container" #scrollableContainer (scroll)="onScroll($event)">
+  <div class="scrollable-container" #scrollableContainer>
     <div class="card-stack">
       <div class="card-stack__layer">
         @for (card of cards; track card.id; let index = $index) {
