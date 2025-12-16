@@ -1,29 +1,35 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title> </ion-title>
+    <ion-title></ion-title>
+
+    @if (showCloseButton()) {
     <ion-buttons slot="end">
       <ion-button (click)="onClose()">
         <ion-icon name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
+    }
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <div class="carousel-wrapper">
-    <div class="carousel-container" [style]="getCarouselStyle()">
-      @for (card of cards; track card.id; let i = $index) {
-      <div
-        class="card"
-        [style]="getCardStyle(i)"
-        (click)="onCardClick(card)"
-      >
-        <div class="card-content">
-          <h2>{{ card.title }}</h2>
+<ion-content [scrollY]="false">
+  <div class="scrollable-container" #scrollableContainer (scroll)="onScroll($event)">
+    <div class="card-stack">
+      <div class="card-stack__layer">
+        @for (card of cards; track card.id; let index = $index) {
+        <div
+          class="card"
+          [style]="cardStyles[index]"
+          (click)="onCardClick(card)"
+        >
+          <div class="card-content">
+            <h2>{{ card.title }}</h2>
+          </div>
         </div>
+        }
       </div>
-      }
+
+      <div class="card-stack__spacer" [style.height.px]="spacerHeight"></div>
     </div>
   </div>
 </ion-content>
-

@@ -2,67 +2,79 @@ ion-header {
   background: transparent;
 }
 
-.carousel-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-  perspective: 1200px;
-  overflow: hidden;
-  position: relative;
+ion-content {
+  --padding-start: 0;
+  --padding-end: 0;
+  --background: transparent;
 }
 
-.carousel-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  transform-style: preserve-3d;
-  user-select: none;
-  touch-action: none;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  padding-top: 50vh;
+:host {
+  display: block;
+  color-scheme: dark;
 }
 
+.scrollable-container {
+  height: 100vh;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  position: relative;
+  z-index: 1;
+}
+
+.card-stack {
+  position: relative;
+  min-height: 100%;
+}
+
+/* Sticky layer that holds visible 3D cards */
+.card-stack__layer {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Invisible scroll space to drive the animation */
+.card-stack__spacer {
+  width: 100%;
+}
+
+/* Cards themselves */
 .card {
   position: absolute;
-  width: 85%;
-  max-width: 320px;
-  height: 400px;
-  background: rgb(30 30 30);
-  border-radius: 20px;
-  cursor: pointer;
+  width: min(360px, 90vw);
+  height: 360px;
+  border-radius: 30px;
+  background: radial-gradient(circle at top, #252525, #111);
+  box-shadow:
+    0 24px 60px rgb(0 0 0 / 80%),
+    0 0 1px rgb(255 255 255 / 3%);
   transform-style: preserve-3d;
-  backface-visibility: hidden;
   will-change: transform, opacity;
-  box-shadow: 0 20px 60px rgb(0 0 0 / 60%);
-  border: 1px solid rgb(255 255 255 / 10%);
-  transition: opacity 0.3s ease-out;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 0;
-
-  &:active {
-    filter: brightness(0.9);
-  }
+  transition:
+    transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 0.22s ease-out;
+  pointer-events: auto;
+  touch-action: pan-y;
+  color: #fff;
+  overflow: hidden;
 }
 
 .card-content {
-  width: 100%;
   height: 100%;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-  color: white;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 16px 20px;
+}
 
-  h2 {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 600;
-  }
+.card-content h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
 }

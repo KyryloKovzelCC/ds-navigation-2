@@ -1,4 +1,13 @@
-import { AfterViewInit, Component, computed, inject, OnDestroy, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnDestroy,
+  computed,
+  inject,
+  ViewChild,
+  ElementRef,
+  ChangeDetectorRef,
+} from '@angular/core';
 import {
   IonHeader,
   IonToolbar,
@@ -33,281 +42,263 @@ interface Card {
 export class SwitchPage implements AfterViewInit, OnDestroy {
   private readonly navigationService = inject(NavigationService);
   private readonly outletService = inject(OutletService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   protected readonly activeOutletIndex = this.outletService.activeOutletIndex;
-  protected readonly currentIndex = signal(0);
+
+  @ViewChild('scrollableContainer', { read: ElementRef })
+  private scrollableContainerRef?: ElementRef<HTMLElement>;
+
+  private scrollListener?: () => void;
+  private wheelListener?: (e: WheelEvent) => void;
+  private touchStartY = 0;
+  private touchStartScrollTop = 0;
+  private isScrolling = false;
+  private touchMoveListener?: (e: TouchEvent) => void;
+  private touchStartListener?: (e: TouchEvent) => void;
+  private touchEndListener?: () => void;
 
   protected readonly showCloseButton = computed(() => {
     return this.activeOutletIndex() === undefined;
   });
 
-  // Sample cards - you can replace this with your actual data
   protected readonly cards: Card[] = [
     { id: 1, title: 'Card 1' },
     { id: 2, title: 'Card 2' },
     { id: 3, title: 'Card 3' },
     { id: 4, title: 'Card 4' },
+    { id: 5, title: 'Card 5' },
+    { id: 6, title: 'Card 6' },
+    { id: 7, title: 'Card 7' },
+    { id: 8, title: 'Card 8' },
   ];
 
-  private isDragging = false;
-  private startY = 0;
-  private currentY = 0;
-  private carouselWrapper: HTMLElement | null = null;
-  private carouselContainer: HTMLElement | null = null;
-  private translateY = signal(0);
-  private velocity = 0;
-  private lastY = 0;
-  private lastTime = 0;
-  private animationFrameId: number | null = null;
+  /** Styles for each card, index-aligned with `cards` */
+  protected readonly cardStyles: Array<Record<string, string | number>> =
+    this.cards.map(() => ({}));
 
-  constructor() {
-    this.outletService.activeOutletIndex.set(
-      this.navigationService.outletIndex,
-    );
-  }
+  /** Height in px of the spacer that drives the scroll */
+  protected spacerHeight = 0;
 
-  public ngAfterViewInit(): void {
-    this.carouselWrapper = document.querySelector('.carousel-wrapper');
-    this.carouselContainer = document.querySelector('.carousel-container');
-    if (this.carouselWrapper) {
-      this.setupTouchHandlers();
-    }
-  }
+  // --- animation constants (tweak to taste) ---
 
-  private setupTouchHandlers(): void {
-    if (!this.carouselWrapper || !this.carouselContainer) return;
+  private readonly MAX_VISIBLE = 4;
+  private readonly STEP = 120; // scroll px per “card step”
+  private readonly DEPTH_PER_CARD = -90;
+  private readonly Y_BASE = -150; // distance between front and 2nd card
+  private readonly SPACING_DECAY = 0.65; // 0–1 → gaps shrink to the back
+  private readonly SCALE_STEP = 0.1;
 
-    this.carouselWrapper.addEventListener('touchstart', (e) => {
-      this.isDragging = true;
-      this.startY = e.touches[0].clientY;
-      this.lastY = e.touches[0].clientY;
-      this.lastTime = Date.now();
-      this.velocity = 0;
-      if (this.carouselContainer) {
-        this.carouselContainer.style.transition = 'none';
-      }
-      this.stopMomentum();
-    }, { passive: false });
+  private scrollTop = 0;
 
-    this.carouselWrapper.addEventListener('touchmove', (e) => {
-      if (!this.isDragging) return;
-      e.preventDefault();
-      const currentTime = Date.now();
-      const deltaTime = currentTime - this.lastTime;
-      const deltaY = e.touches[0].clientY - this.lastY;
-      
-      if (deltaTime > 0) {
-        this.velocity = deltaY / deltaTime;
-      }
-      
-      this.currentY = e.touches[0].clientY;
-      this.lastY = e.touches[0].clientY;
-      this.lastTime = currentTime;
-      this.updatePosition();
-    }, { passive: false });
+  // --------------------------------------------
 
-    this.carouselWrapper.addEventListener('touchend', () => {
-      if (!this.isDragging) return;
-      this.isDragging = false;
-      this.startMomentum();
-    }, { passive: false });
+  ngAfterViewInit(): void {
+    const maxIndex = Math.max(0, this.cards.length - 1);
+    this.spacerHeight = maxIndex * this.STEP;
+    this.cdr.detectChanges();
 
-    // Mouse events for desktop
-    this.carouselWrapper.addEventListener('mousedown', (e) => {
-      this.isDragging = true;
-      this.startY = e.clientY;
-      this.lastY = e.clientY;
-      this.lastTime = Date.now();
-      this.velocity = 0;
-      if (this.carouselContainer) {
-        this.carouselContainer.style.transition = 'none';
-      }
-      this.stopMomentum();
-    }, { passive: false });
-
-    this.carouselWrapper.addEventListener('mousemove', (e) => {
-      if (!this.isDragging) return;
-      e.preventDefault();
-      const currentTime = Date.now();
-      const deltaTime = currentTime - this.lastTime;
-      const deltaY = e.clientY - this.lastY;
-      
-      if (deltaTime > 0) {
-        this.velocity = deltaY / deltaTime;
-      }
-      
-      this.currentY = e.clientY;
-      this.lastY = e.clientY;
-      this.lastTime = currentTime;
-      this.updatePosition();
-    }, { passive: false });
-
-    this.carouselWrapper.addEventListener('mouseup', () => {
-      if (!this.isDragging) return;
-      this.isDragging = false;
-      this.startMomentum();
-    }, { passive: false });
-
-    this.carouselWrapper.addEventListener('mouseleave', () => {
-      if (this.isDragging) {
-        this.isDragging = false;
-        this.startMomentum();
-      }
-    }, { passive: false });
-
-    // Wheel events for desktop
-    this.carouselWrapper.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      const threshold = 30;
-      const delta = e.deltaY;
-
-      if (Math.abs(delta) > threshold) {
-        const cardHeight = 450; // Card height + gap
-        const newTranslateY = this.translateY() - delta * 0.5;
-        this.translateY.set(newTranslateY);
-        this.snapToCard();
-      }
-    }, { passive: false });
-  }
-
-  private updatePosition(): void {
-    if (!this.carouselWrapper) return;
-    const deltaY = this.currentY - this.startY;
-    const cardHeight = 450; // Card height + gap
-    let newTranslateY = this.translateY() + deltaY;
-    
-    // Calculate boundaries
-    const minTranslateY = 0;
-    const maxTranslateY = (this.cards.length - 1) * cardHeight;
-    
-    // Clamp to boundaries with resistance
-    if (newTranslateY < minTranslateY) {
-      newTranslateY = minTranslateY + (newTranslateY - minTranslateY) * 0.3;
-    } else if (newTranslateY > maxTranslateY) {
-      newTranslateY = maxTranslateY + (newTranslateY - maxTranslateY) * 0.3;
-    }
-    
-    this.translateY.set(newTranslateY);
-    this.startY = this.currentY;
-    
-    // Update current index based on position
-    const newIndex = Math.round(newTranslateY / cardHeight);
-    const clampedIndex = Math.max(0, Math.min(this.cards.length - 1, newIndex));
-    if (clampedIndex !== this.currentIndex()) {
-      this.currentIndex.set(clampedIndex);
-    }
-  }
-
-  private startMomentum(): void {
-    this.stopMomentum();
-    
-    const friction = 0.95;
-    const minVelocity = 0.1;
-    
-    const animate = () => {
-      if (Math.abs(this.velocity) < minVelocity) {
-        this.velocity = 0;
-        this.snapToCard();
+    // Wait for DOM to update with spacer height
+    setTimeout(() => {
+      const element = this.scrollableContainerRef?.nativeElement;
+      if (!element) {
         return;
       }
-      
-      const cardHeight = 450;
-      let newTranslateY = this.translateY() - this.velocity * 10;
-      
-      // Calculate boundaries
-      const minTranslateY = 0;
-      const maxTranslateY = (this.cards.length - 1) * cardHeight;
-      
-      // Apply boundaries with bounce
-      if (newTranslateY < minTranslateY) {
-        newTranslateY = minTranslateY;
-        this.velocity = 0;
-        this.snapToCard();
-        return;
-      } else if (newTranslateY > maxTranslateY) {
-        newTranslateY = maxTranslateY;
-        this.velocity = 0;
-        this.snapToCard();
+
+      // Check if element is actually scrollable
+      const scrollHeight = element.scrollHeight;
+      const clientHeight = element.clientHeight;
+      const canScroll = scrollHeight > clientHeight;
+
+      if (!canScroll) {
         return;
       }
-      
-      this.translateY.set(newTranslateY);
-      this.velocity *= friction;
-      
-      // Update current index
-      const newIndex = Math.round(newTranslateY / cardHeight);
-      const clampedIndex = Math.max(0, Math.min(this.cards.length - 1, newIndex));
-      if (clampedIndex !== this.currentIndex()) {
-        this.currentIndex.set(clampedIndex);
+
+      // Attach programmatic scroll listener
+      this.scrollListener = () => {
+        const scrollTop = element.scrollTop;
+        this.scrollTop = scrollTop;
+        this.updateLayout();
+      };
+
+      element.addEventListener('scroll', this.scrollListener, {
+        passive: true,
+      });
+
+      // Handle wheel events (mouse wheel scrolling)
+      this.wheelListener = (e: WheelEvent) => {
+        e.preventDefault();
+        const newScrollTop = element.scrollTop - e.deltaY; // Reversed: subtract instead of add
+        element.scrollTop = Math.max(
+          0,
+          Math.min(newScrollTop, element.scrollHeight - element.clientHeight),
+        );
+      };
+      element.addEventListener('wheel', this.wheelListener, { passive: false });
+
+      // Handle touch events (mobile/trackpad scrolling)
+      this.touchStartListener = (e: TouchEvent) => {
+        this.touchStartY = e.touches[0].clientY;
+        this.touchStartScrollTop = element.scrollTop;
+        this.isScrolling = false;
+      };
+
+      this.touchMoveListener = (e: TouchEvent) => {
+        if (!this.isScrolling) {
+          const deltaY = this.touchStartY - e.touches[0].clientY;
+          if (Math.abs(deltaY) > 5) {
+            this.isScrolling = true;
+          }
+        }
+
+        if (this.isScrolling) {
+          const deltaY = this.touchStartY - e.touches[0].clientY;
+          const newScrollTop = this.touchStartScrollTop - deltaY; // Reversed: subtract instead of add
+          element.scrollTop = Math.max(
+            0,
+            Math.min(newScrollTop, element.scrollHeight - element.clientHeight),
+          );
+        }
+      };
+
+      this.touchEndListener = () => {
+        this.isScrolling = false;
+      };
+
+      element.addEventListener('touchstart', this.touchStartListener, {
+        passive: true,
+      });
+      element.addEventListener('touchmove', this.touchMoveListener, {
+        passive: false,
+      });
+      element.addEventListener('touchend', this.touchEndListener, {
+        passive: true,
+      });
+
+      // Also attach to document/window to catch events that might not reach the element
+      const handleDocumentWheel = (e: WheelEvent) => {
+        // Only handle if the event is over our element
+        const rect = element.getBoundingClientRect();
+        const isOverElement =
+          e.clientX >= rect.left &&
+          e.clientX <= rect.right &&
+          e.clientY >= rect.top &&
+          e.clientY <= rect.bottom;
+
+        if (isOverElement) {
+          e.preventDefault();
+          const newScrollTop = element.scrollTop - e.deltaY; // Reversed: subtract instead of add
+          element.scrollTop = Math.max(
+            0,
+            Math.min(newScrollTop, element.scrollHeight - element.clientHeight),
+          );
+        }
+      };
+      document.addEventListener('wheel', handleDocumentWheel, {
+        passive: false,
+      });
+    }, 100);
+  }
+
+  ngOnDestroy(): void {
+    const element = this.scrollableContainerRef?.nativeElement;
+    if (element) {
+      if (this.scrollListener) {
+        element.removeEventListener('scroll', this.scrollListener);
       }
-      
-      this.animationFrameId = requestAnimationFrame(animate);
-    };
-    
-    this.animationFrameId = requestAnimationFrame(animate);
+      if (this.wheelListener) {
+        element.removeEventListener('wheel', this.wheelListener);
+      }
+      if (this.touchStartListener) {
+        element.removeEventListener('touchstart', this.touchStartListener);
+      }
+      if (this.touchMoveListener) {
+        element.removeEventListener('touchmove', this.touchMoveListener);
+      }
+      if (this.touchEndListener) {
+        element.removeEventListener('touchend', this.touchEndListener);
+      }
+    }
   }
 
-  private stopMomentum(): void {
-    if (this.animationFrameId !== null) {
-      cancelAnimationFrame(this.animationFrameId);
-      this.animationFrameId = null;
+  protected onScroll(event: Event): void {
+    const target = event.target as HTMLElement;
+    if (target) {
+      this.scrollTop = target.scrollTop;
+      this.updateLayout();
     }
-    this.velocity = 0;
-  }
-
-  private snapToCard(): void {
-    this.stopMomentum();
-    
-    if (this.carouselContainer) {
-      this.carouselContainer.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-    }
-    
-    const cardHeight = 450;
-    const targetTranslateY = this.currentIndex() * cardHeight;
-    this.translateY.set(targetTranslateY);
   }
 
   protected onCardClick(card: Card): void {
     this.navigationService.navigateToNewContext(['trading', 'tabs', 'home']);
   }
 
-  protected getCarouselStyle(): { [key: string]: string } {
-    return {
-      transform: `translateY(${-this.translateY()}px)`,
-    };
-  }
-
-  protected getCardStyle(index: number): { [key: string]: string } {
-    const cardHeight = 450; // Card height + gap
-    const baseY = index * cardHeight;
-    const currentY = this.translateY();
-    const offset = baseY - currentY;
-    const absOffset = Math.abs(offset);
-    
-    // Calculate scale and opacity based on distance from center
-    // Cards closer to center (offset = 0) are larger and more opaque
-    const maxDistance = cardHeight * 2;
-    const normalizedDistance = Math.min(absOffset / maxDistance, 1);
-    
-    const scale = Math.max(0.6, 1 - normalizedDistance * 0.4);
-    const opacity = Math.max(0.3, 1 - normalizedDistance * 0.7);
-    
-    // Calculate z-index - cards closer to center should be on top
-    const zIndex = this.cards.length - Math.round(normalizedDistance * this.cards.length);
-
-    return {
-      transform: `translateX(-50%) translateY(${offset}px) scale(${scale})`,
-      opacity: opacity.toString(),
-      zIndex: zIndex.toString(),
-    };
-  }
-
   protected onClose(): void {
-    this.navigationService.navigateToNewContext(['trading', 'tabs', 'home']);
+    // Implement whatever "close" should mean in your app
+    this.navigationService.navigateBack?.();
   }
 
-  public ngOnDestroy(): void {
-    this.stopMomentum();
+  // --- layout logic ported from vanilla JS ------------------------
+
+  private spacingForSlot(slot: number): number {
+    if (slot <= 0) {
+      return 0;
+    }
+    const d = this.SPACING_DECAY;
+    // Geometric series sum for real-valued slot:
+    // Y_BASE * (1 - d^slot) / (1 - d)
+    return (this.Y_BASE * (1 - Math.pow(d, slot))) / (1 - d);
+  }
+
+  private updateLayout(): void {
+    const activeIndex = this.scrollTop / this.STEP; // 0..(cards.length - 1)
+
+    this.cards.forEach((_, index) => {
+      const s = index - activeIndex; // 0 = closest, 1 = behind, etc.
+
+      // invisible if too far behind or already gone
+      if (s > this.MAX_VISIBLE - 1 || s < -1) {
+        this.cardStyles[index] = {
+          opacity: 0,
+          transform: 'translate3d(0, 0, 0) scale(0.7)',
+          'pointer-events': 'none',
+          'z-index': 1000 - index,
+        };
+        return;
+      }
+
+      const clamped = Math.min(Math.max(s, 0), this.MAX_VISIBLE - 1);
+
+      let y = this.spacingForSlot(clamped);
+      let z = clamped * this.DEPTH_PER_CARD;
+      let scale = 1 - clamped * this.SCALE_STEP;
+      let opacity = 1;
+
+      // card leaving the front (s in [-1, 0))
+      if (s < 0) {
+        const t = 1 + s; // s:-1→0 => t:0→1
+
+        // slide further down as it disappears
+        y += (1 - t) * 60;
+
+        // fade only this card
+        opacity = t;
+
+        // tiny scale tweak as it leaves
+        scale *= 0.98 + 0.02 * t;
+      }
+
+      opacity = Math.max(0, Math.min(1, opacity));
+      scale = Math.max(0.7, scale);
+
+      const zIndex = 1000 - index;
+
+      this.cardStyles[index] = {
+        opacity,
+        transform: `translate3d(0, ${y}px, ${z}px) scale(${scale})`,
+        'pointer-events': opacity > 0 ? 'auto' : 'none',
+        'z-index': zIndex,
+      };
+    });
   }
 }
-
