@@ -51,12 +51,7 @@ export class SwitchPage implements AfterViewInit, OnDestroy {
 
   private scrollListener?: () => void;
   private wheelListener?: (e: WheelEvent) => void;
-  private touchStartY = 0;
-  private touchStartScrollTop = 0;
-  private isScrolling = false;
-  private touchMoveListener?: (e: TouchEvent) => void;
-  private touchStartListener?: (e: TouchEvent) => void;
-  private touchEndListener?: () => void;
+  private rafId?: number;
 
   protected readonly showCloseButton = computed(() => {
     return this.activeOutletIndex() === undefined;
@@ -114,18 +109,27 @@ export class SwitchPage implements AfterViewInit, OnDestroy {
         return;
       }
 
-      // Attach programmatic scroll listener
+      // Attach scroll listener - use native scroll events with requestAnimationFrame (like GSAP ScrollTrigger)
+      // This batches updates for smooth performance on mobile
       this.scrollListener = () => {
         const scrollTop = element.scrollTop;
-        this.scrollTop = scrollTop;
-        this.updateLayout();
+        
+        // Cancel previous frame if pending
+        if (this.rafId !== undefined) {
+          cancelAnimationFrame(this.rafId);
+        }
+        
+        // Batch updates using requestAnimationFrame for smooth performance
+        this.rafId = requestAnimationFrame(() => {
+          this.scrollTop = scrollTop;
+          this.updateLayout();
+          this.rafId = undefined;
+        });
       };
 
-      element.addEventListener('scroll', this.scrollListener, {
-        passive: true,
-      });
+      element.addEventListener('scroll', this.scrollListener, { passive: true });
 
-      // Handle wheel events (mouse wheel scrolling)
+      // Handle wheel events (mouse wheel scrolling) - reversed direction
       this.wheelListener = (e: WheelEvent) => {
         e.preventDefault();
         const newScrollTop = element.scrollTop - e.deltaY; // Reversed: subtract instead of add
@@ -136,71 +140,17 @@ export class SwitchPage implements AfterViewInit, OnDestroy {
       };
       element.addEventListener('wheel', this.wheelListener, { passive: false });
 
-      // Handle touch events (mobile/trackpad scrolling)
-      this.touchStartListener = (e: TouchEvent) => {
-        this.touchStartY = e.touches[0].clientY;
-        this.touchStartScrollTop = element.scrollTop;
-        this.isScrolling = false;
-      };
-
-      this.touchMoveListener = (e: TouchEvent) => {
-        if (!this.isScrolling) {
-          const deltaY = this.touchStartY - e.touches[0].clientY;
-          if (Math.abs(deltaY) > 5) {
-            this.isScrolling = true;
-          }
-        }
-
-        if (this.isScrolling) {
-          const deltaY = this.touchStartY - e.touches[0].clientY;
-          const newScrollTop = this.touchStartScrollTop - deltaY; // Reversed: subtract instead of add
-          element.scrollTop = Math.max(
-            0,
-            Math.min(newScrollTop, element.scrollHeight - element.clientHeight),
-          );
-        }
-      };
-
-      this.touchEndListener = () => {
-        this.isScrolling = false;
-      };
-
-      element.addEventListener('touchstart', this.touchStartListener, {
-        passive: true,
-      });
-      element.addEventListener('touchmove', this.touchMoveListener, {
-        passive: false,
-      });
-      element.addEventListener('touchend', this.touchEndListener, {
-        passive: true,
-      });
-
-      // Also attach to document/window to catch events that might not reach the element
-      const handleDocumentWheel = (e: WheelEvent) => {
-        // Only handle if the event is over our element
-        const rect = element.getBoundingClientRect();
-        const isOverElement =
-          e.clientX >= rect.left &&
-          e.clientX <= rect.right &&
-          e.clientY >= rect.top &&
-          e.clientY <= rect.bottom;
-
-        if (isOverElement) {
-          e.preventDefault();
-          const newScrollTop = element.scrollTop - e.deltaY; // Reversed: subtract instead of add
-          element.scrollTop = Math.max(
-            0,
-            Math.min(newScrollTop, element.scrollHeight - element.clientHeight),
-          );
-        }
-      };
-      document.addEventListener('wheel', handleDocumentWheel, {
-        passive: false,
-      });
+      // Don't handle touch events manually - let native scrolling work (like GSAP ScrollTrigger)
+      // Native scroll events will be captured by the scroll listener above
     }, 100);
   }
 
   ngOnDestroy(): void {
+    // Cancel any pending animation frame
+    if (this.rafId !== undefined) {
+      cancelAnimationFrame(this.rafId);
+    }
+
     const element = this.scrollableContainerRef?.nativeElement;
     if (element) {
       if (this.scrollListener) {
@@ -208,15 +158,6 @@ export class SwitchPage implements AfterViewInit, OnDestroy {
       }
       if (this.wheelListener) {
         element.removeEventListener('wheel', this.wheelListener);
-      }
-      if (this.touchStartListener) {
-        element.removeEventListener('touchstart', this.touchStartListener);
-      }
-      if (this.touchMoveListener) {
-        element.removeEventListener('touchmove', this.touchMoveListener);
-      }
-      if (this.touchEndListener) {
-        element.removeEventListener('touchend', this.touchEndListener);
       }
     }
   }
