@@ -241,5 +241,8 @@ export class SwitchPage implements AfterViewInit, OnDestroy {
         'z-index': zIndex,
       };
     });
+    
+    // Use markForCheck instead of detectChanges for better performance during scroll
+    this.cdr.markForCheck();
   }
 }
