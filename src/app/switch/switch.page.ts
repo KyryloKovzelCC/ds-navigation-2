@@ -93,6 +93,10 @@ export class SwitchPage implements AfterViewInit, OnDestroy {
     this.spacerHeight = maxIndex * this.STEP;
     this.cdr.detectChanges();
 
+    // Set initial layout immediately (scrollTop = 0, showing cards 1, 2, 3, 4)
+    this.scrollTop = 0;
+    this.updateLayout();
+
     // Wait for DOM to update with spacer height
     setTimeout(() => {
       const element = this.scrollableContainerRef?.nativeElement;
@@ -113,12 +117,12 @@ export class SwitchPage implements AfterViewInit, OnDestroy {
       // This batches updates for smooth performance on mobile
       this.scrollListener = () => {
         const scrollTop = element.scrollTop;
-        
+
         // Cancel previous frame if pending
         if (this.rafId !== undefined) {
           cancelAnimationFrame(this.rafId);
         }
-        
+
         // Batch updates using requestAnimationFrame for smooth performance
         this.rafId = requestAnimationFrame(() => {
           this.scrollTop = scrollTop;
@@ -127,7 +131,9 @@ export class SwitchPage implements AfterViewInit, OnDestroy {
         });
       };
 
-      element.addEventListener('scroll', this.scrollListener, { passive: true });
+      element.addEventListener('scroll', this.scrollListener, {
+        passive: true,
+      });
 
       // Handle wheel events (mouse wheel scrolling) - reversed direction
       this.wheelListener = (e: WheelEvent) => {
@@ -176,14 +182,26 @@ export class SwitchPage implements AfterViewInit, OnDestroy {
 
   protected onClose(): void {
     // Implement whatever "close" should mean in your app
-    this.navigationService.navigateBack?.();
+    this.navigationService.navigateBack(undefined, {
+      animation: undefined,
+    });
   }
 
   // --- layout logic ported from vanilla JS ------------------------
 
   private spacingForSlot(slot: number): number {
+    // Now handles negative slots for forward movement (disappearing front card)
+    // slot = 0: front card (about to disappear)
+    // slot = 1: next card (becoming front)
+    // slot < 0: card moving forward (disappearing)
+    // slot > 1: cards behind
     if (slot <= 0) {
-      return 0;
+      // For negative slots (forward movement), use reverse of the pattern
+      const absSlot = Math.abs(slot);
+      const d = this.SPACING_DECAY;
+      // Reverse geometric series for forward movement
+      // As slot goes negative, move further down (forward)
+      return -((this.Y_BASE * (1 - Math.pow(d, absSlot))) / (1 - d));
     }
     const d = this.SPACING_DECAY;
     // Geometric series sum for real-valued slot:
@@ -197,8 +215,32 @@ export class SwitchPage implements AfterViewInit, OnDestroy {
     this.cards.forEach((_, index) => {
       const s = index - activeIndex; // 0 = closest, 1 = behind, etc.
 
-      // invisible if too far behind or already gone
-      if (s > this.MAX_VISIBLE - 1 || s < -1) {
+      // Handle cards that are too far behind (disappearing at the top)
+      // Let them continue moving backwards and scaling down as they fade
+      if (s > this.MAX_VISIBLE - 1) {
+        // Continue using the actual s value for position, but fade out
+        const fadeStart = this.MAX_VISIBLE - 1;
+        const fadeEnd = this.MAX_VISIBLE + 0.5; // Fade over a range
+        const fadeRange = fadeEnd - fadeStart;
+        const fadeProgress = Math.min(1, (s - fadeStart) / fadeRange);
+        const fadeOpacity = Math.max(0, 1 - fadeProgress);
+
+        // Continue the natural movement pattern
+        const y = this.spacingForSlot(s);
+        const z = s * this.DEPTH_PER_CARD;
+        const scale = Math.max(0.3, 1 - s * this.SCALE_STEP); // Continue scaling down
+
+        this.cardStyles[index] = {
+          opacity: fadeOpacity,
+          transform: `translate3d(0, ${y}px, ${z}px) scale(${scale})`,
+          'pointer-events': 'none',
+          'z-index': 1000 - index,
+        };
+        return;
+      }
+
+      // Handle cards that are already gone (s < -1)
+      if (s < -1) {
         this.cardStyles[index] = {
           opacity: 0,
           transform: 'translate3d(0, 0, 0) scale(0.7)',
@@ -208,25 +250,28 @@ export class SwitchPage implements AfterViewInit, OnDestroy {
         return;
       }
 
-      const clamped = Math.min(Math.max(s, 0), this.MAX_VISIBLE - 1);
+      // Use actual s value for all calculations - no special cases needed
+      // s = 0: front card (about to disappear)
+      // s = 1: next card (becoming front)
+      // s < 0: card moving forward (disappearing) - use negative slot
+      // s > 1: cards behind
 
-      let y = this.spacingForSlot(clamped);
-      let z = clamped * this.DEPTH_PER_CARD;
-      let scale = 1 - clamped * this.SCALE_STEP;
+      // Calculate position using spacingForSlot (now handles negative slots)
+      const y = this.spacingForSlot(s);
+
+      // Calculate z and scale based on absolute value of s
+      const absS = Math.abs(s);
+      const z = s * this.DEPTH_PER_CARD; // s negative = forward (positive z)
+      let scale =
+        s < 0
+          ? 1 + absS * this.SCALE_STEP // Scale up as it moves forward
+          : 1 - absS * this.SCALE_STEP; // Scale down as it moves back
+
+      // Fade out for disappearing front card (s < 0)
       let opacity = 1;
-
-      // card leaving the front (s in [-1, 0))
-      if (s < 0) {
+      if (s < 0 && s >= -1) {
         const t = 1 + s; // s:-1→0 => t:0→1
-
-        // slide further down as it disappears
-        y += (1 - t) * 60;
-
-        // fade only this card
-        opacity = t;
-
-        // tiny scale tweak as it leaves
-        scale *= 0.98 + 0.02 * t;
+        opacity = Math.max(0, t);
       }
 
       opacity = Math.max(0, Math.min(1, opacity));
@@ -241,7 +286,7 @@ export class SwitchPage implements AfterViewInit, OnDestroy {
         'z-index': zIndex,
       };
     });
-    
+
     // Use markForCheck instead of detectChanges for better performance during scroll
     this.cdr.markForCheck();
   }

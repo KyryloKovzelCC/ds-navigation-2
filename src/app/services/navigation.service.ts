@@ -1,8 +1,10 @@
-import { inject, Injectable, OnDestroy } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { InjectionToken } from '@angular/core';
 import { NavController } from '@ionic/angular/standalone';
 import { OutletService } from './outlet.service';
+import { AnimationOptions } from '@ionic/angular/common/providers/nav-controller';
 
 export const FLOW_OUTLET_INDEX = new InjectionToken<number>(
   'FLOW_OUTLET_INDEX',
@@ -16,7 +18,14 @@ export class NavigationService {
   public readonly outletIndex: number = inject(FLOW_OUTLET_INDEX);
   private readonly outletIndexes = [0, 1, 2, 3];
 
-  public navigateBack(segments?: string[]): Promise<any> {
+  public navigateBack(
+    segments?: string[],
+    animationOptions?: AnimationOptions,
+  ): Promise<any> {
+    if (!segments) {
+      this.navController.back(animationOptions);
+    }
+
     if (!segments?.length) return Promise.resolve();
 
     const route = this.buildCommands(segments);

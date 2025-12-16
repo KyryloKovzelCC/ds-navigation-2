@@ -70,8 +70,10 @@ ion-tab-bar {
 }
 
 ion-tab-button {
+  color: grey;
+
   &[aria-selected="true"] {
-    color: grey;
+    color: white;
   }
 }
 
