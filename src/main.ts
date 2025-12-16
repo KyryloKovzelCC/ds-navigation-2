@@ -5,6 +5,7 @@ import {
   withPreloading,
   PreloadAllModules,
   withComponentInputBinding,
+  UrlSerializer,
 } from '@angular/router';
 import {
   IonicRouteStrategy,
@@ -14,6 +15,7 @@ import {
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 import { horizontalTransition } from './app/utils/animations';
+import { FlowUrlSerializer } from './app/core/flow-url.serializer';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -27,5 +29,6 @@ bootstrapApplication(AppComponent, {
       withPreloading(PreloadAllModules),
       withComponentInputBinding(),
     ),
+    { provide: UrlSerializer, useClass: FlowUrlSerializer },
   ],
 });
