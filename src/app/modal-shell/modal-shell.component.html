@@ -11,6 +11,7 @@
     [handle]="true"
     cssClass="flow-modal"
     [class.invisible]="isQuickActionsOpen()"
+    [class.no-backdrop]="outletIndex === 0 && activeOutletIndex() === 0"
   >
     <ng-template>
       <ion-router-outlet></ion-router-outlet>
@@ -18,10 +19,12 @@
   </ion-modal>
 }
 
-<div class="search-bar">
-  <div class="search-wrapper" (click)="onSearchClick()">
-    <app-icon name="search" [style.--icon-size]="'20px'"></app-icon>
-    <input type="text" placeholder="Search or ask anything" />
+@if (outletIndex === 0 && activeOutletIndex() === 0) {
+  <div class="search-bar">
+    <div class="search-wrapper" (click)="onSearchClick()">
+      <app-icon name="search" [style.--icon-size]="'20px'"></app-icon>
+      <input type="text" placeholder="Search or ask anything" />
+    </div>
+    <app-icon name="profile" [style.--icon-size]="'20px'"></app-icon>
   </div>
-  <app-icon name="profile" [style.--icon-size]="'20px'"></app-icon>
-</div>
+}

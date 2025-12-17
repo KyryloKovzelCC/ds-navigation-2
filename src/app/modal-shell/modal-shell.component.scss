@@ -5,6 +5,14 @@ ion-modal {
   &.invisible {
     opacity: 0;
   }
+
+  // &.no-backdrop {
+  //  pointer-events: none;
+  //
+  //  &::part(backdrop) {
+  //    pointer-events: none;
+  //  }
+  // }
 }
 
 .search-bar {
@@ -15,7 +23,8 @@ ion-modal {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 16px;
+  height: 52px;
+  padding: 8px 16px 0;
 
   .search-wrapper {
     display: flex;
