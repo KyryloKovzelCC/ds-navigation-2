@@ -137,10 +137,10 @@ export class SwitchPage implements AfterViewInit, OnDestroy {
         passive: true,
       });
 
-      // Handle wheel events (mouse wheel scrolling) - reversed direction
+      // Handle wheel events (mouse wheel scrolling)
       this.wheelListener = (e: WheelEvent) => {
         e.preventDefault();
-        const newScrollTop = element.scrollTop - e.deltaY; // Reversed: subtract instead of add
+        const newScrollTop = element.scrollTop + e.deltaY; // Normal direction: add deltaY
         element.scrollTop = Math.max(
           0,
           Math.min(newScrollTop, element.scrollHeight - element.clientHeight),
@@ -206,7 +206,9 @@ export class SwitchPage implements AfterViewInit, OnDestroy {
   }
 
   private updateLayout(): void {
-    const activeIndex = this.scrollTop / this.STEP; // 0..(cards.length - 1)
+    // Reverse scroll direction: calculate from max scroll position
+    const maxScroll = (this.cards.length - 1) * this.STEP;
+    const activeIndex = (maxScroll - this.scrollTop) / this.STEP; // Reversed: subtract from max
 
     this.cards.forEach((_, index) => {
       const s = index - activeIndex; // 0 = closest, 1 = behind, etc.
