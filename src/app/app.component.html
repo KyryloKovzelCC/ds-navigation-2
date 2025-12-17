@@ -91,4 +91,8 @@
   <ion-router-outlet id="flow3" name="flow3" />
 </ion-app>
 
-<app-quick-actions [class.visible]="isQuickActionsOpen()" />
+@if (isQuickActionsOpen()) {
+  <div [@quickActions]>
+    <app-quick-actions />
+  </div>
+}
