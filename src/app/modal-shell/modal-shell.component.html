@@ -18,8 +18,10 @@
   </ion-modal>
 }
 
-<!--<div class="search-bar">-->
-<!--  <app-icon name="search" [style.&#45;&#45;icon-size]="'20px'"></app-icon>-->
-<!--  <input type="text" placeholder="Search or ask anything" />-->
-<!--  <app-icon name="profile" [style.&#45;&#45;icon-size]="'20px'"></app-icon>-->
-<!--</div>-->
+<div class="search-bar">
+  <div class="search-wrapper" (click)="onSearchClick()">
+    <app-icon name="search" [style.--icon-size]="'20px'"></app-icon>
+    <input type="text" placeholder="Search or ask anything" />
+  </div>
+  <app-icon name="profile" [style.--icon-size]="'20px'"></app-icon>
+</div>

@@ -7,31 +7,37 @@ ion-modal {
   }
 }
 
-//
-// .search-bar {
-//  display: flex;
-//  align-items: center;
-//  gap: 12px;
-//  padding: 12px 16px;
-//  margin: 0 16px 16px;
-//  background: rgb(255 255 255 / 8%);
-//  border-radius: 30px;
-//
-//  app-icon {
-//    flex-shrink: 0;
-//    color: rgba(255, 255, 255, 0.5);
-//  }
-//
-//  input {
-//    flex: 1;
-//    background: transparent;
-//    border: none;
-//    outline: none;
-//    color: rgba(255, 255, 255, 0.7);
-//    font-size: 14px;
-//
-//    &::placeholder {
-//      color: rgba(255, 255, 255, 0.5);
-//    }
-//  }
-// }
+.search-bar {
+  position: absolute;
+  top: 0;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+
+  .search-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  app-icon {
+    flex-shrink: 0;
+    color: rgb(255 255 245 / 30%);
+  }
+
+  input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: rgb(255 255 245 / 30%);
+    font-size: 14px;
+
+    &::placeholder {
+      color: rgb(255 255 255 / 50%);
+    }
+  }
+}

@@ -14,13 +14,14 @@ import { NavigationService } from '../services/navigation.service';
 import { OutletService } from '../services/outlet.service';
 import { AnimationController, Animation } from '@ionic/angular';
 import { QuickActionsService } from '../services/quick-actions.service';
+import { IconComponent } from '../icon/icon.component';
 
 @Component({
   selector: 'app-modal-shell',
   templateUrl: './modal-shell.component.html',
   styleUrl: './modal-shell.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IonModal, IonRouterOutlet],
+  imports: [IonModal, IonRouterOutlet, IconComponent],
   host: { '[class.invisible]': 'isQuickActionsOpen()' },
 })
 export class ModalShellComponent implements AfterViewInit {
@@ -118,5 +119,9 @@ export class ModalShellComponent implements AfterViewInit {
     console.log('test dismiss');
     this.isOpen.set(false);
     return this.navigationService.dismissOutlet(['ai-search']);
+  }
+
+  protected onSearchClick(): void {
+    console.log('SEARCH');
   }
 }
