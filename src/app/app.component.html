@@ -91,8 +91,13 @@
   <ion-router-outlet id="flow3" name="flow3" />
 </ion-app>
 
-@if (isQuickActionsOpen()) {
-  <div [@quickActions]>
-    <app-quick-actions />
-  </div>
-}
+<div
+  [@quickActions]="isQuickActionsOpen()"
+  (@quickActions.start)="animationDone.set(false)"
+  (@quickActions.done)="animationDone.set(true)"
+>
+  <app-quick-actions
+    [class.visible]="isQuickActionsOpen()"
+    [class.hidden]="!isQuickActionsOpen() && animationDone()"
+  />
+</div>

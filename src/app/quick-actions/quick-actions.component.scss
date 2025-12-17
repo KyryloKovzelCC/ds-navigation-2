@@ -4,6 +4,10 @@
   justify-content: flex-end;
   backdrop-filter: blur(50px);
   background-color: rgb(#050202, 0.5);
+  transition:
+    opacity,
+    backdrop-filter,
+    background-color 0.3s ease-in-out;
 }
 
 .grid-container {

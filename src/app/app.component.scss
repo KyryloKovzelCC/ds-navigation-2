@@ -21,5 +21,15 @@ ion-router-outlet#main {
 app-quick-actions {
   position: fixed;
   inset: 0;
+  opacity: 0;
   z-index: 1;
+  transition: opacity 0.3s ease-in-out;
+
+  &.visible {
+    opacity: 1;
+  }
+
+  &.hidden {
+    z-index: -1;
+  }
 }

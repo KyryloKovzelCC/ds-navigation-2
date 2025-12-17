@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { QuickActionsService } from './services/quick-actions.service';
 import { QuickActionsComponent } from './quick-actions/quick-actions.component';
@@ -15,4 +15,6 @@ export class AppComponent {
   private readonly quickActionsService = inject(QuickActionsService);
 
   protected readonly isQuickActionsOpen = this.quickActionsService.isOpen;
+
+  protected readonly animationDone = signal(true);
 }

@@ -141,15 +141,22 @@ export const quickActionsAnimation: AnimationTriggerMetadata = trigger(
   'quickActions',
   [
     // ENTER
-    transition(':enter', [
-      style({ opacity: 0 }),
+    transition('false => true', [
+      // style({
+      //   opacity: 0,
+      // }),
 
       query('.icon-wrapper', style({ transform: 'rotate(-45deg)' }), {
         optional: true,
       }),
 
       group([
-        animate('300ms ease-out', style({ opacity: 1 })),
+        // animate(
+        //   '300ms ease-out',
+        //   style({
+        //     opacity: 1,
+        //   }),
+        // ),
         query(
           '.icon-wrapper',
           animate('300ms ease-out', style({ transform: 'rotate(0deg)' })),
@@ -159,9 +166,9 @@ export const quickActionsAnimation: AnimationTriggerMetadata = trigger(
     ]),
 
     // LEAVE
-    transition(':leave', [
+    transition('true => false', [
       group([
-        animate('300ms ease-in', style({ opacity: 0 })),
+        // animate('300ms ease-in', style({ opacity: 0 })),
         query(
           '.icon-wrapper',
           animate('300ms ease-in', style({ transform: 'rotate(-45deg)' })),
