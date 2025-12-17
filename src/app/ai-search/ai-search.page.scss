@@ -1,3 +1,17 @@
+:host {
+  backdrop-filter: blur(50px);
+  transition: backdrop-filter 0.3s ease-in-out;
+}
+
 ion-header {
   background: transparent;
+}
+
+.close-button {
+  --width: 40px;
+  --height: 40px;
+
+  app-icon {
+    --icon-size: 10px;
+  }
 }

@@ -11,6 +11,8 @@ import {
 } from '@ionic/angular/standalone';
 import { NavigationService } from '../services/navigation.service';
 import { OutletService } from '../services/outlet.service';
+import { ButtonComponent } from '../button/button.component';
+import { IconComponent } from '../icon/icon.component';
 
 @Component({
   selector: 'app-ai-search',
@@ -21,9 +23,9 @@ import { OutletService } from '../services/outlet.service';
     IonToolbar,
     IonTitle,
     IonContent,
-    IonIcon,
     IonButtons,
-    IonButton,
+    ButtonComponent,
+    IconComponent,
   ],
   host: { '[class.is-blurred]': 'true' },
 })

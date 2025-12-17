@@ -1,3 +1,10 @@
+:host {
+  display: block;
+  color-scheme: dark;
+  backdrop-filter: blur(50px);
+  transition: backdrop-filter 0.3s ease-in-out;
+}
+
 ion-header {
   background: transparent;
 }
@@ -6,11 +13,6 @@ ion-content {
   --padding-start: 0;
   --padding-end: 0;
   --background: transparent;
-}
-
-:host {
-  display: block;
-  color-scheme: dark;
 }
 
 .scrollable-container {
@@ -49,21 +51,22 @@ ion-content {
   position: absolute;
   width: min(360px, 90vw);
   height: 360px;
-  border-radius: 30px;
-  background: radial-gradient(circle at top, #252525, #111);
+  border-radius: 37.964px;
+  background: linear-gradient(180deg, #1f1b1b 0%, #000 100%), #1d1a1a;
   box-shadow:
     0 24px 60px rgb(0 0 0 / 80%),
     0 0 1px rgb(255 255 255 / 3%);
   transform-style: preserve-3d;
   will-change: transform, opacity;
+
   /* No CSS transitions - updates happen directly via JavaScript for smooth performance */
   pointer-events: auto;
   touch-action: pan-y;
-  color: #fff;
+  color: #fffff5;
   overflow: hidden;
+
   /* Force hardware acceleration */
   backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
 }
 
 .card-content {
@@ -78,4 +81,13 @@ ion-content {
   margin: 0;
   font-size: 1rem;
   font-weight: 600;
+}
+
+.close-button {
+  --width: 40px;
+  --height: 40px;
+
+  app-icon {
+    --icon-size: 10px;
+  }
 }

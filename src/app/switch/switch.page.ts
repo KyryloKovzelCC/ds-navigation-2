@@ -15,11 +15,12 @@ import {
   IonContent,
   IonIcon,
   IonButtons,
-  IonButton,
 } from '@ionic/angular/standalone';
 import { NavigationService } from '../services/navigation.service';
 import { OutletService } from '../services/outlet.service';
 import { slideUpAndDownTransition } from '../utils/animations';
+import { ButtonComponent } from '../button/button.component';
+import { IconComponent } from '../icon/icon.component';
 
 interface Card {
   id: number;
@@ -35,9 +36,9 @@ interface Card {
     IonToolbar,
     IonTitle,
     IonContent,
-    IonIcon,
     IonButtons,
-    IonButton,
+    ButtonComponent,
+    IconComponent,
   ],
 })
 export class SwitchPage implements AfterViewInit, OnDestroy {

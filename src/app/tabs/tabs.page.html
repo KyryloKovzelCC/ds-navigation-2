@@ -6,7 +6,7 @@
       (click)="onTabClick(tab.path, $index)"
     >
       <app-icon [name]="tab.icon"></app-icon>
-      {{ tab.name }}
+      <div class="tab-title">{{ tab.name }}</div>
     </ion-tab-button>
     }
 
