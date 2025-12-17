@@ -31,7 +31,7 @@ import { IconComponent } from '../icon/icon.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderMobileComponent {
-  public readonly title = input<string>('');
+  public readonly title = input<string | undefined>('');
   public readonly showBack = input<boolean>(false);
   public readonly showClose = input<boolean>(false);
 

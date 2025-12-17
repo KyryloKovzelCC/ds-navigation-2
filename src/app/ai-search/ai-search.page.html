@@ -1,15 +1,9 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title> Blank </ion-title>
-    <ion-buttons slot="end">
-      <button class="close-button" app-button (click)="onClose()">
-        <app-icon name="close"></app-icon>
-      </button>
-    </ion-buttons>
-  </ion-toolbar>
-  <ion-toolbar>
-    <ion-title> Search or ask anything </ion-title>
-  </ion-toolbar>
+  <app-header-mobile
+    [showBack]="false"
+    [showClose]="true"
+    (closeClick)="onClose()"
+  />
 </ion-header>
 
 <ion-content [fullscreen]="true">
@@ -21,9 +15,5 @@
   </ion-header>
   }
 
-  <div>
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus alias
-    blanditiis consectetur culpa debitis id impedit iste itaque neque nulla.
-    Atque corporis ducimus eius eligendi, id odio quisquam vero voluptatem.
-  </div>
+  <app-content-placeholder />
 </ion-content>

@@ -96,12 +96,12 @@ function buildHeaderWrapperExtras(
   const isRTLFactor = navEl.ownerDocument.dir === 'rtl' ? -1 : 1;
   const OFF_START =
     opts.direction === 'forward'
-      ? `${99.5 * isRTLFactor}%`
+      ? `${33 * isRTLFactor}%`
       : `${-33 * isRTLFactor}%`;
   const OFF_END =
     opts.direction === 'forward'
       ? `${-33 * isRTLFactor}%`
-      : `${99.5 * isRTLFactor}%`;
+      : `${33 * isRTLFactor}%`;
   const OPACITY_START = 0.01;
   const OPACITY_END = 1;
 

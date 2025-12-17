@@ -1,19 +1,4 @@
 <ion-header>
-  <!--  <ion-toolbar>-->
-  <!--    <ion-buttons slot="start">-->
-  <!--      @if (backPathSegments()?.length) {-->
-  <!--      <ion-button fill="clear" (click)="onBack()">-->
-  <!--        <ion-icon slot="icon-only" name="chevron-back"></ion-icon>-->
-  <!--      </ion-button>-->
-  <!--      }-->
-  <!--    </ion-buttons>-->
-  <!--    <ion-title>Page {{ title() }}</ion-title>-->
-  <!--    <ion-buttons slot="end">-->
-  <!--      <button class="close-button" app-button (click)="dismissOutlet()">-->
-  <!--        <app-icon name="close"></app-icon>-->
-  <!--      </button>-->
-  <!--    </ion-buttons>-->
-  <!--  </ion-toolbar>-->
   <app-header-mobile
     [title]="'Page ' + title()"
     [showBack]="!!backPathSegments()?.length"

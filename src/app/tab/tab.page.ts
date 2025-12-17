@@ -11,6 +11,8 @@ import { NavigationService } from '../services/navigation.service';
 import { slideUpAndDownTransition } from '../utils/animations';
 import { ButtonComponent } from '../button/button.component';
 import { ContentPlaceholderComponent } from '../content-placeholder/content-placeholder.component';
+import { ScrolledContentHeaderShadowDirective } from '../directives/scrolled-content-header-shadow.directive';
+import { HeaderMobileComponent } from '../header/header-mobile.component';
 
 @Component({
   selector: 'app-tab',
@@ -25,6 +27,8 @@ import { ContentPlaceholderComponent } from '../content-placeholder/content-plac
     IonContent,
     ButtonComponent,
     ContentPlaceholderComponent,
+    ScrolledContentHeaderShadowDirective,
+    HeaderMobileComponent,
   ],
   host: { '[attr.data-tab-index]': 'tabIndex()' },
 })

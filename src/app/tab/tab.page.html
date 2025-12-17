@@ -1,14 +1,12 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start"> </ion-buttons>
-    <ion-title>{{ title() }}</ion-title>
-    <ion-buttons slot="end">
+<ion-header [scrolledContentShadow]="contentRef">
+  <app-header-mobile [title]="title()" [showBack]="false" [showClose]="false">
+    <ion-buttons slot="buttonsEnd">
       <button app-button (click)="onSwitch()">Switch</button>
     </ion-buttons>
-  </ion-toolbar>
+  </app-header-mobile>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content #contentRef [fullscreen]="true">
   <!--  <div>Outlet: flow{{ outletIndex }}</div>-->
 
   <br />

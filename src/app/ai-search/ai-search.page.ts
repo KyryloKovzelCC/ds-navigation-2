@@ -13,6 +13,8 @@ import { NavigationService } from '../services/navigation.service';
 import { OutletService } from '../services/outlet.service';
 import { ButtonComponent } from '../button/button.component';
 import { IconComponent } from '../icon/icon.component';
+import { HeaderMobileComponent } from '../header/header-mobile.component';
+import { ContentPlaceholderComponent } from '../content-placeholder/content-placeholder.component';
 
 @Component({
   selector: 'app-ai-search',
@@ -23,9 +25,10 @@ import { IconComponent } from '../icon/icon.component';
     IonToolbar,
     IonTitle,
     IonContent,
-    IonButtons,
     ButtonComponent,
     IconComponent,
+    HeaderMobileComponent,
+    ContentPlaceholderComponent,
   ],
   host: { '[class.is-blurred]': 'true' },
 })

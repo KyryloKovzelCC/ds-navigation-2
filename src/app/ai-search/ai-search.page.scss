@@ -1,6 +1,9 @@
 :host {
   backdrop-filter: blur(50px);
-  transition: backdrop-filter 0.3s ease-in-out;
+  background: rgb(#050202, 0.5);
+  transition:
+    backdrop-filter,
+    background 0.3s ease-in-out;
 }
 
 ion-header {
