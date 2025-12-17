@@ -43,7 +43,7 @@ interface Card {
     IconComponent,
     CardComponent,
   ],
-  animations: [getPageFadeSlideAnimation('bottomToTop')],
+  animations: [getPageFadeSlideAnimation('topToBottom')],
   host: { '[@pageFadeSlide]': '' },
 })
 export class SwitchPage implements AfterViewInit, OnDestroy {
