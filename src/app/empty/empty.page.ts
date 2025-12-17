@@ -22,7 +22,10 @@ export class EmptyPage implements AfterViewInit {
 
   public ngAfterViewInit(): void {
     setTimeout(() => {
-      if (this.activeOutletIndex() === -1) {
+      if (
+        this.activeOutletIndex() === -1 ||
+        this.activeOutletIndex() === undefined
+      ) {
         this.navigationService.navigateWithinNewOutlet([
           'trading',
           'tabs',
