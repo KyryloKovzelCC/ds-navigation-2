@@ -100,7 +100,7 @@ export function getPageFadeSlideAnimation(
               '300ms ease-in',
               style({
                 opacity: 0,
-                transform: `translateY(${-30 * factor}px)`,
+                transform: `translateY(${30 * factor}px)`,
               }),
             ),
           ],

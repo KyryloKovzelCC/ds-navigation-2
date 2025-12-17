@@ -187,10 +187,7 @@ export class SwitchPage implements AfterViewInit, OnDestroy {
   }
 
   protected onClose(): void {
-    // Implement whatever "close" should mean in your app
-    this.navigationService.navigateBack(undefined, {
-      animation: slideUpAndDownTransition,
-    });
+    this.navigationService.navigateToNewContext(['trading', 'tabs', 'home']);
   }
 
   // --- layout logic ported from vanilla JS ------------------------
