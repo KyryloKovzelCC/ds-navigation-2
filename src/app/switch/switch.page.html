@@ -17,15 +17,11 @@
     <div class="card-stack">
       <div class="card-stack__layer">
         @for (card of cards; track card.id; let index = $index) {
-        <div
+        <app-card
           class="card"
           [style]="cardStyles[index]"
           (click)="onCardClick(card)"
-        >
-          <div class="card-content">
-            <h2>{{ card.title }}</h2>
-          </div>
-        </div>
+        ></app-card>
         }
       </div>
 

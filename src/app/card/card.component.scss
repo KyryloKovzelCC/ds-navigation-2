@@ -1,0 +1,80 @@
+.account-card {
+  height: 100%;
+  padding: 16px 20px 20px;
+  border-radius: 24px;
+  background: radial-gradient(circle at top left, #3b3b3b 0, #161616 45%), #000;
+  color: #fff;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Text",
+    sans-serif;
+}
+
+.account-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.account-card__title {
+  display: flex;
+  gap: 4px;
+  align-items: baseline;
+}
+
+.account-card__currency,
+.account-card__segment {
+  color: rgb(255 255 255 / 50%);
+  font-weight: 400;
+}
+
+.account-card__amount {
+  margin: 6px 0 18px;
+}
+
+.amount-main {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.amount-decimal {
+  font-size: 28px;
+  font-weight: 600;
+  opacity: 0.6;
+}
+
+.account-card__footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  font-size: 13px;
+}
+
+.account-card__col {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  margin-bottom: 4px;
+  color: rgb(255 255 255 / 55%);
+}
+
+.value {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.value-decimal {
+  opacity: 0.6;
+}
+
+.value--profit {
+  color: #3ddc84; // tweak to match your brand green
+}

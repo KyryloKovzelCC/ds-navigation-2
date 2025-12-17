@@ -21,6 +21,7 @@ import { OutletService } from '../services/outlet.service';
 import { slideUpAndDownTransition } from '../utils/animations';
 import { ButtonComponent } from '../button/button.component';
 import { IconComponent } from '../icon/icon.component';
+import { CardComponent } from '../card/card.component';
 
 interface Card {
   id: number;
@@ -39,6 +40,7 @@ interface Card {
     IonButtons,
     ButtonComponent,
     IconComponent,
+    CardComponent,
   ],
 })
 export class SwitchPage implements AfterViewInit, OnDestroy {
