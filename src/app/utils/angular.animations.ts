@@ -12,7 +12,6 @@ export function getPageFadeSlideAnimation(
   direction: 'topToBottom' | 'bottomToTop',
 ) {
   const factor = direction === 'topToBottom' ? -1 : 1;
-  console.log({ factor });
 
   return trigger('pageFadeSlide', [
     // ENTER: host bg fades in, content slides up from bottom
