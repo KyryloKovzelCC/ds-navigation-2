@@ -125,7 +125,14 @@ export const routes: Routes = [
         useValue: -1,
       },
     ],
+    loadComponent: () =>
+      import('./shell/shell.component').then((m) => m.ShellComponent),
     children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./empty/empty.page').then((m) => m.EmptyPage),
+      },
       {
         path: 'ai-search',
         loadComponent: () =>
@@ -137,8 +144,8 @@ export const routes: Routes = [
           import('./switch/switch.page').then((m) => m.SwitchPage),
       },
       {
-        path: '',
-        redirectTo: 'ai-search',
+        path: '**',
+        redirectTo: '',
         pathMatch: 'full',
       },
     ],

@@ -93,9 +93,8 @@ export class NavigationService {
     const newOutletIndex = this.outletIndex + 1;
     const route = [
       {
-        path: '',
         outlets: {
-          primary: ['ai-search'],
+          primary: [''],
           [`flow${newOutletIndex}`]: [...segments],
           ...this.dismissHigherOutlets(newOutletIndex),
         },
@@ -105,7 +104,10 @@ export class NavigationService {
     console.log('navigateToNewContext', route);
 
     this.outletService.activeOutletIndex.set(newOutletIndex);
-    return this.navController.navigateRoot(route, animationOptions);
+    return this.navController.navigateRoot(route, {
+      ...animationOptions,
+      relativeTo: this.router.routerState.root, // 👈 force absolute navigation
+    });
   }
 
   private buildCommands(

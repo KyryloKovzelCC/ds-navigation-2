@@ -8,8 +8,9 @@
     [initialBreakpoint]="initialBreakPoint"
     [breakpoints]="[0, initialBreakPoint]"
     [expandToScroll]="false"
-    [handle]="false"
+    [handle]="true"
     cssClass="flow-modal"
+    [class.invisible]="isQuickActionsOpen()"
   >
     <ng-template>
       <ion-router-outlet></ion-router-outlet>

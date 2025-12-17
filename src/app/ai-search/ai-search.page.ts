@@ -25,17 +25,13 @@ import { OutletService } from '../services/outlet.service';
     IonButtons,
     IonButton,
   ],
-  host: { '[class.is-blurred]': 'activeOutletIndex() > 0' },
+  host: { '[class.is-blurred]': 'true' },
 })
-export class AiSearchPage implements AfterViewInit {
+export class AiSearchPage {
   private readonly navigationService = inject(NavigationService);
   private readonly outletService = inject(OutletService);
 
   protected readonly activeOutletIndex = this.outletService.activeOutletIndex;
-
-  protected readonly showCloseButton = computed(() => {
-    return this.activeOutletIndex() === undefined;
-  });
 
   constructor() {
     this.outletService.activeOutletIndex.set(
@@ -43,19 +39,7 @@ export class AiSearchPage implements AfterViewInit {
     );
   }
 
-  public ngAfterViewInit(): void {
-    setTimeout(() => {
-      if (this.activeOutletIndex() === -1) {
-        this.navigationService.navigateWithinNewOutlet([
-          'trading',
-          'tabs',
-          'home',
-        ]);
-      }
-    });
-  }
-
   protected onClose(): void {
-    this.navigationService.navigateWithinNewOutlet(['trading', 'tabs', 'home']);
+    this.navigationService.navigateToNewContext(['trading', 'tabs', 'home']);
   }
 }

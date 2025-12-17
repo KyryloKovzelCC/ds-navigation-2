@@ -1,0 +1,26 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  backdrop-filter: blur(50px);
+  transition:
+    opacity,
+    backdrop-filter 0.3s ease-in-out;
+}
+
+.footer {
+  height: 75px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.close-button-wrapper {
+  padding: 0 16px;
+}
+
+.close-button {
+  app-icon {
+    --icon-size: 14px;
+  }
+}

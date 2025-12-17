@@ -9,12 +9,21 @@ import {
 } from '@ionic/angular/standalone';
 import { NavigationService } from '../services/navigation.service';
 import { slideUpAndDownTransition } from '../utils/animations';
+import { ButtonComponent } from '../button/button.component';
 
 @Component({
   selector: 'app-tab',
   templateUrl: 'tab.page.html',
   styleUrls: ['tab.page.scss'],
-  imports: [IonHeader, IonToolbar, IonButton, IonButtons, IonTitle, IonContent],
+  imports: [
+    IonHeader,
+    IonToolbar,
+    IonButton,
+    IonButtons,
+    IonTitle,
+    IonContent,
+    ButtonComponent,
+  ],
   host: { '[attr.data-tab-index]': 'tabIndex()' },
 })
 export class TabPage {

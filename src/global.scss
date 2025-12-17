@@ -43,7 +43,7 @@
 
 ion-modal {
   .ion-page {
-    background: black;
+    background: #050202;
   }
 }
 
@@ -52,7 +52,8 @@ ion-header {
     box-shadow: none;
   }
 
-  background: black;
+  background: #050202;
+  padding-top: 8px;
 }
 
 ion-toolbar {
@@ -86,11 +87,11 @@ ion-content {
 }
 
 ion-modal {
-  --border-radius: 2rem;
+  --border-radius: 40px;
   --background: transparent !important;
   --backdrop-opacity: 0;
 
   ion-content {
-    --background: black;
+    --background: #050202;
   }
 }

@@ -1,0 +1,26 @@
+:host {
+  --height: 36px;
+  --width: auto;
+  --bg-color: rgb(247 247 247 / 12%);
+
+  display: inline-flex;
+  height: var(--height);
+  width: var(--width);
+  border-radius: 25976px;
+  background-color: var(--bg-color);
+  min-width: 40px;
+  padding: 0 12px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  color: #f7f7f7;
+  text-align: center;
+  font-feature-settings:
+    "liga" off,
+    "clig" off;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px; /* 160% */
+  letter-spacing: 0.2px;
+}

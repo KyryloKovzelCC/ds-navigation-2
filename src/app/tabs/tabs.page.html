@@ -5,13 +5,20 @@
       [attr.aria-selected]="currentTabIndex() === $index"
       (click)="onTabClick(tab.path, $index)"
     >
-      <ion-icon [name]="tab.icon"></ion-icon>
+      <app-icon [name]="tab.icon"></app-icon>
       {{ tab.name }}
     </ion-tab-button>
     }
 
-    <ion-tab-button>
-      <ion-icon name="grid"></ion-icon>
-    </ion-tab-button>
+    <div class="quick-actions-wrapper">
+      <button
+        app-button
+        (click)="openQuickActions()"
+        [style.width.px]="59"
+        [style.height.px]="59"
+      >
+        <app-icon name="fast-actions" [style.color]="'white'"></app-icon>
+      </button>
+    </div>
   </ion-tab-bar>
 </ion-tabs>

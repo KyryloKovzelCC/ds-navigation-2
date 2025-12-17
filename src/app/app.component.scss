@@ -17,3 +17,16 @@ ion-app {
 ion-router-outlet#main {
   z-index: 1 !important;
 }
+
+app-quick-actions {
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  z-index: -1;
+
+  &.visible {
+    opacity: 1;
+    z-index: 1;
+  }
+}

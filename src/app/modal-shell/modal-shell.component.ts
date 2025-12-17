@@ -13,6 +13,7 @@ import { IonModal, IonRouterOutlet } from '@ionic/angular/standalone';
 import { NavigationService } from '../services/navigation.service';
 import { OutletService } from '../services/outlet.service';
 import { AnimationController, Animation } from '@ionic/angular';
+import { QuickActionsService } from '../services/quick-actions.service';
 
 @Component({
   selector: 'app-modal-shell',
@@ -20,14 +21,17 @@ import { AnimationController, Animation } from '@ionic/angular';
   styleUrl: './modal-shell.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IonModal, IonRouterOutlet],
+  host: { '[class.invisible]': 'isQuickActionsOpen()' },
 })
 export class ModalShellComponent implements AfterViewInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly navigationService = inject(NavigationService);
   private readonly outletService = inject(OutletService);
   private readonly animationController = inject(AnimationController);
+  private readonly quickActionsService = inject(QuickActionsService);
 
   protected readonly outletIndex = this.navigationService.outletIndex;
+  protected readonly isQuickActionsOpen = this.quickActionsService.isOpen;
 
   protected readonly initialBreakPoint =
     this.navigationService.outletIndex === 0 ? 0.95 : 0.98;
@@ -65,6 +69,10 @@ export class ModalShellComponent implements AfterViewInit {
       }
 
       this.prevActiveOutletIndex = activeOutletIndex;
+    });
+
+    effect(() => {
+      console.log('test quick actions', this.isQuickActionsOpen());
     });
   }
 
@@ -107,7 +115,8 @@ export class ModalShellComponent implements AfterViewInit {
   }
 
   public async onDidDismiss(): Promise<boolean> {
+    console.log('test dismiss');
     this.isOpen.set(false);
-    return this.navigationService.dismissOutlet();
+    return this.navigationService.dismissOutlet(['ai-search']);
   }
 }
