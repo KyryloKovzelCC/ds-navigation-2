@@ -1,4 +1,10 @@
-import { Animation, createAnimation } from '@ionic/angular';
+import {
+  Animation,
+  createAnimation,
+  iosTransitionAnimation,
+  mdTransitionAnimation,
+  TransitionOptions,
+} from '@ionic/angular';
 
 export const horizontalTransition = (
   baseEl: HTMLElement,
@@ -35,6 +41,8 @@ export const horizontalTransition = (
 
     root.addAnimation(leave);
   }
+
+  root.addAnimation(buildHeaderWrapperExtras(enteringEl, opts));
 
   return root;
 };
@@ -80,3 +88,129 @@ export const slideUpAndDownTransition = (
 
   return root;
 };
+
+function buildHeaderWrapperExtras(
+  navEl: HTMLElement,
+  opts: TransitionOptions,
+): Animation {
+  const isRTLFactor = navEl.ownerDocument.dir === 'rtl' ? -1 : 1;
+  const OFF_START =
+    opts.direction === 'forward'
+      ? `${99.5 * isRTLFactor}%`
+      : `${-33 * isRTLFactor}%`;
+  const OFF_END =
+    opts.direction === 'forward'
+      ? `${-33 * isRTLFactor}%`
+      : `${99.5 * isRTLFactor}%`;
+  const OPACITY_START = 0.01;
+  const OPACITY_END = 1;
+
+  const extra = createAnimation();
+
+  const wire = (
+    el: HTMLElement | null | undefined,
+    entering: boolean,
+  ): void => {
+    if (!el) {
+      return;
+    }
+
+    el.querySelectorAll('ion-header').forEach((header) => {
+      if (!header.querySelector('app-header-mobile')) {
+        return;
+      }
+
+      const direction = opts.direction === 'back' ? 'back' : 'forward';
+
+      // 1) Pin header against the page slide (net movement = 0)
+      header
+        .querySelectorAll<HTMLElement>('app-header-mobile')
+        .forEach((node) => {
+          extra.addAnimation(
+            createAnimation()
+              .addElement(node)
+              .fill('both')
+              .fromTo(
+                'transform',
+                entering
+                  ? direction === 'forward'
+                    ? 'translateX(-100%)'
+                    : 'translateX(100%)'
+                  : direction === 'forward'
+                    ? 'translateX(0)'
+                    : 'translateX(0)',
+                entering
+                  ? direction === 'forward'
+                    ? 'translateX(0)'
+                    : 'translateX(0)'
+                  : direction === 'forward'
+                    ? 'translateX(100%)'
+                    : 'translateX(-100%)',
+              )
+              .fromTo(
+                'opacity',
+                entering ? OPACITY_START : OPACITY_END,
+                entering ? OPACITY_END : OPACITY_START,
+              ),
+          );
+        });
+
+      // 2) Title: slide + fade
+      header
+        .querySelectorAll<HTMLElement>('app-header-mobile ion-title')
+        .forEach((node) => {
+          extra.addAnimation(
+            createAnimation()
+              .addElement(node)
+              .fill('both')
+              .fromTo(
+                'transform',
+                entering ? `translateX(${OFF_START})` : 'translateX(0)',
+                entering ? 'translateX(0)' : `translateX(${OFF_END})`,
+              )
+              .fromTo(
+                'opacity',
+                entering ? OPACITY_START : OPACITY_END,
+                entering ? OPACITY_END : OPACITY_START,
+              ),
+          );
+        });
+
+      // 3) Buttons: fade only
+      header
+        .querySelectorAll<HTMLElement>('app-header-mobile ion-buttons')
+        .forEach((node) => {
+          extra.addAnimation(
+            createAnimation()
+              .addElement(node)
+              .fill('both')
+              .fromTo(
+                'opacity',
+                entering ? OPACITY_START : OPACITY_END,
+                entering ? OPACITY_END : OPACITY_START,
+              ),
+          );
+        });
+
+      // 4) Sibling toolbars: fade only (e.g., tabs toolbar)
+      header
+        .querySelectorAll<HTMLElement>(':scope > ion-toolbar')
+        .forEach((toolbar) => {
+          extra.addAnimation(
+            createAnimation()
+              .addElement(toolbar)
+              .fill('both')
+              .fromTo(
+                'opacity',
+                entering ? OPACITY_START : OPACITY_END,
+                entering ? OPACITY_END : OPACITY_START,
+              ),
+          );
+        });
+    });
+  };
+
+  wire(opts.enteringEl, true);
+  wire(opts.leavingEl, false);
+  return extra;
+}

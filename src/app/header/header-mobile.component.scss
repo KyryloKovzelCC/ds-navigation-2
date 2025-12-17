@@ -1,0 +1,13 @@
+:host {
+  display: flex;
+  width: 100%;
+}
+
+.close-button {
+  --width: 36px;
+  --height: 36px;
+
+  app-icon {
+    --icon-size: 10px;
+  }
+}

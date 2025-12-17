@@ -12,6 +12,7 @@ import { NavigationService } from '../services/navigation.service';
 import { ContentPlaceholderComponent } from '../content-placeholder/content-placeholder.component';
 import { ButtonComponent } from '../button/button.component';
 import { IconComponent } from '../icon/icon.component';
+import { HeaderMobileComponent } from '../header/header-mobile.component';
 
 @Component({
   selector: 'app-home',
@@ -28,6 +29,7 @@ import { IconComponent } from '../icon/icon.component';
     ContentPlaceholderComponent,
     ButtonComponent,
     IconComponent,
+    HeaderMobileComponent,
   ],
 })
 export class FlowPage {
