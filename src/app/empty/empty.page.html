@@ -1,0 +1,9 @@
+@if (activeOutletIndex() === 0) {
+<div class="search-bar" (click)="onSearchClick()">
+  <div class="search-wrapper">
+    <app-icon name="search" [style.--icon-size]="'20px'"></app-icon>
+    <span>Search or ask anything</span>
+  </div>
+  <app-icon name="profile" [style.--icon-size]="'20px'"></app-icon>
+</div>
+}

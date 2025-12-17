@@ -56,6 +56,16 @@ export class ModalShellComponent implements AfterViewInit {
 
     effect(() => {
       const activeOutletIndex = this.activeOutletIndex();
+      if (
+        activeOutletIndex === undefined ||
+        activeOutletIndex < this.outletIndex
+      ) {
+        this.isOpen.set(false);
+      }
+    });
+
+    effect(() => {
+      const activeOutletIndex = this.activeOutletIndex();
 
       if (
         activeOutletIndex === this.outletIndex + 1 &&
@@ -116,9 +126,9 @@ export class ModalShellComponent implements AfterViewInit {
   }
 
   public async onDidDismiss(): Promise<boolean> {
-    console.log('test dismiss');
     this.isOpen.set(false);
-    return this.navigationService.dismissOutlet(['ai-search']);
+    const primaryOutletSegments = this.outletIndex === 0 ? ['ai-search'] : [];
+    return this.navigationService.dismissOutlet(primaryOutletSegments);
   }
 
   protected onSearchClick(): void {

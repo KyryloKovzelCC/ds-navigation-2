@@ -1,18 +1,13 @@
-import {
-  AfterViewInit,
-  ChangeDetectorRef,
-  Component,
-  inject,
-} from '@angular/core';
-import { IonRouterOutlet } from '@ionic/angular/standalone';
+import { AfterViewInit, Component, inject } from '@angular/core';
 import { NavigationService } from '../services/navigation.service';
 import { OutletService } from '../services/outlet.service';
-import { AnimationController } from '@ionic/angular';
+import { IconComponent } from '../icon/icon.component';
 
 @Component({
   selector: 'app-empty',
   templateUrl: 'empty.page.html',
   styleUrls: ['empty.page.scss'],
+  imports: [IconComponent],
 })
 export class EmptyPage implements AfterViewInit {
   private readonly navigationService = inject(NavigationService);
@@ -33,5 +28,9 @@ export class EmptyPage implements AfterViewInit {
         ]);
       }
     });
+  }
+
+  protected onSearchClick(): Promise<boolean> {
+    return this.navigationService.dismissOutlet(['ai-search']);
   }
 }
