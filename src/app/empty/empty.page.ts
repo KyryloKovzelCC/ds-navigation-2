@@ -2,12 +2,14 @@ import { AfterViewInit, Component, inject } from '@angular/core';
 import { NavigationService } from '../services/navigation.service';
 import { OutletService } from '../services/outlet.service';
 import { IconComponent } from '../icon/icon.component';
+import { fadeInOutAnimation } from '../utils/angular.animations';
 
 @Component({
   selector: 'app-empty',
   templateUrl: 'empty.page.html',
   styleUrls: ['empty.page.scss'],
   imports: [IconComponent],
+  animations: [fadeInOutAnimation],
 })
 export class EmptyPage implements AfterViewInit {
   private readonly navigationService = inject(NavigationService);

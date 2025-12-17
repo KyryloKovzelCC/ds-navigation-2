@@ -22,6 +22,7 @@ import { slideUpAndDownTransition } from '../utils/animations';
 import { ButtonComponent } from '../button/button.component';
 import { IconComponent } from '../icon/icon.component';
 import { CardComponent } from '../card/card.component';
+import { getPageFadeSlideAnimation } from '../utils/angular.animations';
 
 interface Card {
   id: number;
@@ -42,6 +43,8 @@ interface Card {
     IconComponent,
     CardComponent,
   ],
+  animations: [getPageFadeSlideAnimation('bottomToTop')],
+  host: { '[@pageFadeSlide]': '' },
 })
 export class SwitchPage implements AfterViewInit, OnDestroy {
   private readonly navigationService = inject(NavigationService);

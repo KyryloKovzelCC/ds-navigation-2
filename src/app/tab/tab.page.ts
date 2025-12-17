@@ -45,8 +45,6 @@ export class TabPage {
   }
 
   protected onSwitch(): void {
-    this.navigationService.dismissOutlet(['switch'], {
-      animation: slideUpAndDownTransition,
-    });
+    this.navigationService.dismissOutlet(['switch']);
   }
 }

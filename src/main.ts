@@ -16,9 +16,11 @@ import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 import { horizontalTransition } from './app/utils/animations';
 import { FlowUrlSerializer } from './app/core/flow-url.serializer';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 bootstrapApplication(AppComponent, {
   providers: [
+    provideAnimations(),
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular({
       navAnimation: horizontalTransition,

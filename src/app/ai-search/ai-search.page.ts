@@ -1,20 +1,15 @@
-import { AfterViewInit, Component, computed, inject } from '@angular/core';
-import { Location } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import {
   IonHeader,
   IonToolbar,
   IonTitle,
   IonContent,
-  IonIcon,
-  IonButtons,
-  IonButton,
 } from '@ionic/angular/standalone';
 import { NavigationService } from '../services/navigation.service';
 import { OutletService } from '../services/outlet.service';
-import { ButtonComponent } from '../button/button.component';
-import { IconComponent } from '../icon/icon.component';
 import { HeaderMobileComponent } from '../header/header-mobile.component';
 import { ContentPlaceholderComponent } from '../content-placeholder/content-placeholder.component';
+import { getPageFadeSlideAnimation } from '../utils/angular.animations';
 
 @Component({
   selector: 'app-ai-search',
@@ -25,12 +20,11 @@ import { ContentPlaceholderComponent } from '../content-placeholder/content-plac
     IonToolbar,
     IonTitle,
     IonContent,
-    ButtonComponent,
-    IconComponent,
     HeaderMobileComponent,
     ContentPlaceholderComponent,
   ],
-  host: { '[class.is-blurred]': 'true' },
+  animations: [getPageFadeSlideAnimation('topToBottom')],
+  host: { '[@pageFadeSlide]': '' },
 })
 export class AiSearchPage {
   private readonly navigationService = inject(NavigationService);
