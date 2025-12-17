@@ -29,6 +29,6 @@ bootstrapApplication(AppComponent, {
       withPreloading(PreloadAllModules),
       withComponentInputBinding(),
     ),
-    // { provide: UrlSerializer, useClass: FlowUrlSerializer },
+    { provide: UrlSerializer, useClass: FlowUrlSerializer },
   ],
 });
