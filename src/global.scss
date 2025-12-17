@@ -83,7 +83,6 @@ ion-content {
   --ion-text-color: white;
   --padding-start: 1rem;
   --padding-end: 1rem;
-  --overflow: hidden;
 }
 
 ion-modal {
@@ -94,4 +93,8 @@ ion-modal {
   ion-content {
     --background: #050202;
   }
+}
+
+.modal-handle {
+  background-color: rgb(249 250 229 / 22%) !important;
 }

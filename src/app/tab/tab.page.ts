@@ -10,6 +10,7 @@ import {
 import { NavigationService } from '../services/navigation.service';
 import { slideUpAndDownTransition } from '../utils/animations';
 import { ButtonComponent } from '../button/button.component';
+import { ContentPlaceholderComponent } from '../content-placeholder/content-placeholder.component';
 
 @Component({
   selector: 'app-tab',
@@ -23,6 +24,7 @@ import { ButtonComponent } from '../button/button.component';
     IonTitle,
     IonContent,
     ButtonComponent,
+    ContentPlaceholderComponent,
   ],
   host: { '[attr.data-tab-index]': 'tabIndex()' },
 })

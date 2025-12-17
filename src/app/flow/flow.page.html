@@ -9,16 +9,16 @@
     </ion-buttons>
     <ion-title>Page {{ title() }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button fill="clear" (click)="dismissOutlet()">
-        <ion-icon name="close"></ion-icon>
-      </ion-button>
+      <button class="close-button" app-button (click)="dismissOutlet()">
+        <app-icon name="close"></app-icon>
+      </button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div>Outlet: flow{{ outletIndex }}</div>
-  <br />
+  <!--  <div>Outlet: flow{{ outletIndex }}</div>-->
+  <!--  <br />-->
 
   @if (+title() < 4) {
   <ion-button (click)="onNext()">Next page within flow</ion-button>
@@ -29,4 +29,9 @@
   @if (outletIndex < 3) {
   <ion-button color="warning" (click)="onNewFlow()">Open new flow</ion-button>
   }
+
+  <br />
+  <br />
+
+  <app-content-placeholder />
 </ion-content>

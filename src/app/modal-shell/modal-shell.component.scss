@@ -6,3 +6,32 @@ ion-modal {
     opacity: 0;
   }
 }
+
+//
+// .search-bar {
+//  display: flex;
+//  align-items: center;
+//  gap: 12px;
+//  padding: 12px 16px;
+//  margin: 0 16px 16px;
+//  background: rgb(255 255 255 / 8%);
+//  border-radius: 30px;
+//
+//  app-icon {
+//    flex-shrink: 0;
+//    color: rgba(255, 255, 255, 0.5);
+//  }
+//
+//  input {
+//    flex: 1;
+//    background: transparent;
+//    border: none;
+//    outline: none;
+//    color: rgba(255, 255, 255, 0.7);
+//    font-size: 14px;
+//
+//    &::placeholder {
+//      color: rgba(255, 255, 255, 0.5);
+//    }
+//  }
+// }

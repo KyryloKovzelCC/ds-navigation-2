@@ -9,6 +9,9 @@ import {
   IonIcon,
 } from '@ionic/angular/standalone';
 import { NavigationService } from '../services/navigation.service';
+import { ContentPlaceholderComponent } from '../content-placeholder/content-placeholder.component';
+import { ButtonComponent } from '../button/button.component';
+import { IconComponent } from '../icon/icon.component';
 
 @Component({
   selector: 'app-home',
@@ -22,6 +25,9 @@ import { NavigationService } from '../services/navigation.service';
     IonTitle,
     IonContent,
     IonIcon,
+    ContentPlaceholderComponent,
+    ButtonComponent,
+    IconComponent,
   ],
 })
 export class FlowPage {

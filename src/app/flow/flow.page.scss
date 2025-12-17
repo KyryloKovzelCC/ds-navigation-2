@@ -22,3 +22,12 @@
 #container a {
   text-decoration: none;
 }
+
+.close-button {
+  --width: 36px;
+  --height: 36px;
+
+  app-icon {
+    --icon-size: 10px;
+  }
+}
