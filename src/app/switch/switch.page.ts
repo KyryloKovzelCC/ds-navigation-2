@@ -95,8 +95,9 @@ export class SwitchPage implements AfterViewInit, OnDestroy {
     this.spacerHeight = maxIndex * this.STEP;
     this.cdr.detectChanges();
 
-    // Set initial layout immediately (scrollTop = 0, showing cards 1, 2, 3, 4)
-    this.scrollTop = 0;
+    // Set initial layout - with reversed direction, need max scroll to show cards 1, 2, 3, 4
+    const maxScroll = maxIndex * this.STEP;
+    this.scrollTop = maxScroll;
     this.updateLayout();
 
     // Wait for DOM to update with spacer height
@@ -105,6 +106,10 @@ export class SwitchPage implements AfterViewInit, OnDestroy {
       if (!element) {
         return;
       }
+
+      // Set initial scroll position to show cards 1, 2, 3, 4 (at the bottom with reversed direction)
+      element.scrollTop = maxScroll;
+      this.scrollTop = maxScroll;
 
       // Check if element is actually scrollable
       const scrollHeight = element.scrollHeight;
